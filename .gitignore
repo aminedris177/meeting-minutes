@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+.DS_Store
+Thumbs.db
+
+# ملفات مرجعية فيها بيانات حقيقية — ممنوع ترفع على الـ repo العام
+templates_ref/
+*.docx
+*.xlsx
+*.xls
+backup*.json
+
+# تعليمات خاصة بالمطوّر — مش للرفع
+CLAUDE.md
