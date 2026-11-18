@@ -3,6 +3,7 @@ import '@fontsource/cairo/400.css';
 import '@fontsource/cairo/600.css';
 import '@fontsource/cairo/700.css';
 import './styles/main.css';
+import './styles/components.css';
 import { App } from './app';
 import { setLang } from './i18n';
 import { captureInstallPrompt } from './lib/install';

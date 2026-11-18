@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'preact/hooks';
-import { Screen } from '../components/Screen';
-import { t } from '../i18n';
-import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../lib/platform';
+import { Screen } from '../../components/Screen';
+import { ChevronIcon, PeopleIcon } from '../../components/icons';
+import { useLive } from '../../db/live';
+import { db } from '../../db/schema';
+import { fmt, t } from '../../i18n';
+import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../../lib/platform';
+import { OrgCard } from './OrgCard';
 
 interface Props {
   offlineReady: boolean;
@@ -13,6 +17,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
   const [persist, setPersist] = useState<PersistState | null>(null);
   const [usage, setUsage] = useState<string>('');
   const standalone = isStandalone();
+  const peopleCount = useLive(() => db.people.filter((p) => p.active).count(), []);
 
   useEffect(() => {
     void getPersistState().then(setPersist);
@@ -24,6 +29,17 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
 
   return (
     <Screen title={m.title}>
+      <OrgCard />
+
+      <a class="card nav-card" href="#/settings/people">
+        <PeopleIcon />
+        <span class="list-main">
+          <span class="list-title">{m.peopleLink}</span>
+          {peopleCount !== undefined && <span class="list-sub">{fmt(t().people.count, { n: peopleCount })}</span>}
+        </span>
+        <ChevronIcon />
+      </a>
+
       <section class="card">
         <h2>{m.storage}</h2>
         <p class={persist === 'not-persisted' ? 'warn' : ''}>{persistText}</p>

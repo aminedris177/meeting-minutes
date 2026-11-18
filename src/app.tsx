@@ -5,19 +5,25 @@ import { InstallHint } from './components/InstallHint';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
 import { isStandalone } from './lib/platform';
-import { topSegment, useHashPath } from './lib/router';
-import { ArchiveScreen, FollowupScreen, HomeScreen, MeetingsScreen } from './screens/placeholders';
-import { SettingsScreen } from './screens/Settings';
+import { segments, useHashPath } from './lib/router';
+import { HomeScreen } from './screens/Home';
+import { PeopleScreen } from './screens/people/People';
+import { ArchiveScreen, FollowupScreen, MeetingsScreen } from './screens/placeholders';
+import { SeriesWizard } from './screens/series/SeriesWizard';
+import { SettingsScreen } from './screens/settings/Settings';
 
 const UPDATE_CHECK_MS = 60 * 60 * 1000; // فحص التحديثات كل ساعة وعند الرجوع للتطبيق
 
 export function App() {
   const path = useHashPath();
-  const seg = topSegment(path);
+  const segs = segments(path);
+  const seg = segs[0] ?? '';
+  // الشاشات اللي بملء الشاشة (معالجات) من غير الشريط السفلي
+  const fullscreen = seg === 'series';
 
   const {
     needRefresh: [needRefresh, setNeedRefresh],
-    offlineReady: [offlineReady, setOfflineReady],
+    offlineReady: [offlineReady],
     updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(_url, reg) {
@@ -33,9 +39,17 @@ export function App() {
   });
 
   const [showInstall, setShowInstall] = useState(() => !isStandalone() && !isInstallHintDismissed());
+  // رسالة «جاهز بدون إنترنت» معلومة بس — بتختفي لوحدها. (حالة offlineReady نفسها بتفضل للإعدادات)
+  const [offlineToast, setOfflineToast] = useState(false);
+  useEffect(() => {
+    if (!offlineReady) return;
+    setOfflineToast(true);
+    const timer = setTimeout(() => setOfflineToast(false), 4000);
+    return () => clearTimeout(timer);
+  }, [offlineReady]);
 
   // تمرير لأعلى عند تغيير الشاشة
-  useEffect(() => window.scrollTo(0, 0), [seg]);
+  useEffect(() => window.scrollTo(0, 0), [path]);
 
   const dismissInstall = () => {
     setInstallHintDismissed(true);
@@ -59,14 +73,18 @@ export function App() {
       screen = <ArchiveScreen />;
       break;
     case 'settings':
-      screen = <SettingsScreen offlineReady={offlineReady} onShowInstall={reopenInstall} />;
+      screen =
+        segs[1] === 'people' ? <PeopleScreen /> : <SettingsScreen offlineReady={offlineReady} onShowInstall={reopenInstall} />;
+      break;
+    case 'series':
+      screen = <SeriesWizard key={segs[1]} id={segs[1] === 'new' ? undefined : segs[1]} />;
       break;
     default:
       screen = <HomeScreen />;
   }
 
   return (
-    <div class="app">
+    <div class={`app ${fullscreen ? 'fullscreen' : ''}`}>
       {showInstall && seg === '' && (
         <div class="install-wrap">
           <InstallHint onDismiss={dismissInstall} />
@@ -75,14 +93,14 @@ export function App() {
       {screen}
       <UpdatePrompt
         needRefresh={needRefresh}
-        offlineReady={offlineReady}
+        offlineReady={offlineToast}
         onUpdate={() => void updateServiceWorker(true)}
         onClose={() => {
           setNeedRefresh(false);
-          setOfflineReady(false);
+          setOfflineToast(false);
         }}
       />
-      <BottomNav active={seg} />
+      {!fullscreen && <BottomNav active={seg} />}
     </div>
   );
 }

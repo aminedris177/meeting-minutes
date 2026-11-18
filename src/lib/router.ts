@@ -20,7 +20,12 @@ export function useHashPath(): string {
   return path;
 }
 
+/** أجزاء المسار: "/series/abc" → ["series", "abc"] */
+export function segments(path: string): string[] {
+  return path.split('/').filter(Boolean).map(decodeURIComponent);
+}
+
 /** أول جزء في المسار: "/followup/12" → "followup" */
 export function topSegment(path: string): string {
-  return path.split('/').filter(Boolean)[0] ?? '';
+  return segments(path)[0] ?? '';
 }

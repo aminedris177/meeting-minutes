@@ -1,0 +1,107 @@
+import { isOpen, isOverdue } from '../../domain/delay';
+import { isValidColor, isValidPrefix, normalizePrefix, type SeriesDraft } from '../../domain/series';
+import { isValidRecurrence } from '../../domain/recurrence';
+import type { ISODate } from '../../lib/dates';
+import { db, newId, type AppDB } from '../schema';
+import type { ID, Series } from '../types';
+
+export type SeriesError = 'name' | 'prefix' | 'recurrence' | 'colors';
+
+export function validateSeries(draft: SeriesDraft): SeriesError[] {
+  const errors: SeriesError[] = [];
+  if (!draft.name.trim()) errors.push('name');
+  if (!isValidPrefix(normalizePrefix(draft.taskPrefix))) errors.push('prefix');
+  if (!isValidRecurrence(draft.recurrence)) errors.push('recurrence');
+  if (!isValidColor(draft.colors.primary) || !isValidColor(draft.colors.secondary)) errors.push('colors');
+  return errors;
+}
+
+function cleanDraft(draft: SeriesDraft): SeriesDraft {
+  return {
+    ...draft,
+    name: draft.name.trim(),
+    taskPrefix: normalizePrefix(draft.taskPrefix),
+    recurrence: draft.recurrence.kind === 'custom' ? draft.recurrence : { kind: draft.recurrence.kind },
+    memberIds: [...new Set(draft.memberIds)],
+    defaultTopics: draft.defaultTopics.map((t) => t.trim()).filter(Boolean),
+    registerName: draft.registerName.trim(),
+  };
+}
+
+export async function createSeries(draft: SeriesDraft, d: AppDB = db): Promise<Series> {
+  const errors = validateSeries(draft);
+  if (errors.length) throw new Error(`Invalid series: ${errors.join(', ')}`);
+  const now = Date.now();
+  const s: Series = {
+    ...cleanDraft(draft),
+    id: newId(),
+    taskCounter: 0,
+    meetingCounter: 0,
+    archived: false,
+    createdAt: now,
+    updatedAt: now,
+  };
+  await d.series.add(s);
+  return s;
+}
+
+/** التعديل مبيلمسش العدادات — أرقام المهام والاجتماعات القديمة ثابتة. */
+export async function updateSeries(id: ID, draft: SeriesDraft, d: AppDB = db): Promise<void> {
+  const errors = validateSeries(draft);
+  if (errors.length) throw new Error(`Invalid series: ${errors.join(', ')}`);
+  await d.series.update(id, { ...cleanDraft(draft), updatedAt: Date.now() });
+}
+
+export async function setSeriesArchived(id: ID, archived: boolean, d: AppDB = db): Promise<void> {
+  await d.series.update(id, { archived, updatedAt: Date.now() });
+}
+
+/** حذف السلسلة مسموح بس لو مفيهاش اجتماعات ولا مهام. غير كده تتأرشف. */
+export async function canDeleteSeries(id: ID, d: AppDB = db): Promise<boolean> {
+  const [m, t] = await Promise.all([
+    d.meetings.where('seriesId').equals(id).count(),
+    d.tasks.where('seriesId').equals(id).count(),
+  ]);
+  return m + t === 0;
+}
+
+export async function deleteSeries(id: ID, d: AppDB = db): Promise<void> {
+  await d.transaction('rw', [d.series, d.meetings, d.tasks, d.registerItems], async () => {
+    if (!(await canDeleteSeries(id, d))) throw new Error('Series has meetings or tasks');
+    await d.registerItems.where('seriesId').equals(id).delete();
+    await d.series.delete(id);
+  });
+}
+
+export async function seriesUsesPrefix(prefix: string, exceptId: ID | undefined, d: AppDB = db): Promise<boolean> {
+  const p = normalizePrefix(prefix);
+  return (await d.series.filter((s) => s.taskPrefix === p && s.id !== exceptId).count()) > 0;
+}
+
+export interface SeriesSummary {
+  series: Series;
+  openTasks: number;
+  overdueTasks: number;
+  /** آخر اجتماع ← nextDate، أو تاريخ أول اجتماع لو لسه مفيش اجتماعات */
+  nextMeeting?: ISODate;
+  meetingsCount: number;
+}
+
+export async function listSeriesSummaries(today: ISODate, d: AppDB = db): Promise<SeriesSummary[]> {
+  const all = await d.series.toArray();
+  const result = await Promise.all(
+    all.map(async (s): Promise<SeriesSummary> => {
+      const tasks = await d.tasks.where('seriesId').equals(s.id).toArray();
+      const meetings = await d.meetings.where('seriesId').equals(s.id).sortBy('number');
+      const last = meetings[meetings.length - 1];
+      return {
+        series: s,
+        openTasks: tasks.filter(isOpen).length,
+        overdueTasks: tasks.filter((t) => isOverdue(t, today)).length,
+        nextMeeting: last ? last.nextDate : s.firstMeetingDate,
+        meetingsCount: meetings.length,
+      };
+    }),
+  );
+  return result.sort((a, b) => Number(a.series.archived) - Number(b.series.archived) || a.series.createdAt - b.series.createdAt);
+}

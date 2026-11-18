@@ -137,6 +137,7 @@ button {
   cursor: pointer;
   background: var(--light);
   color: var(--primary);
+  text-decoration: none;
 }
 .btn.primary {
   background: var(--primary);

@@ -57,3 +57,31 @@ export const AddSquareIcon = (p: P) =>
 
 export const RefreshIcon = (p: P) =>
   base([<path d="M20 11a8 8 0 10-2.3 5.7" />, <path d="M20 4v7h-7" />], p);
+
+export const CloseIcon = (p: P) => base([<path d="M6 6l12 12M18 6L6 18" />], p);
+
+export const GripIcon = (p: P) =>
+  base(
+    [
+      <circle cx="9" cy="6" r="1.2" fill="currentColor" stroke="none" />,
+      <circle cx="15" cy="6" r="1.2" fill="currentColor" stroke="none" />,
+      <circle cx="9" cy="12" r="1.2" fill="currentColor" stroke="none" />,
+      <circle cx="15" cy="12" r="1.2" fill="currentColor" stroke="none" />,
+      <circle cx="9" cy="18" r="1.2" fill="currentColor" stroke="none" />,
+      <circle cx="15" cy="18" r="1.2" fill="currentColor" stroke="none" />,
+    ],
+    p,
+  );
+
+export const PlusIcon = (p: P) => base([<path d="M12 5v14M5 12h14" />], p);
+
+/** سهم «للأمام» في RTL (يشاور شمال) */
+export const ChevronIcon = (p: P) => base([<path d="M15 6l-6 6 6 6" />], p);
+
+export const TrashIcon = (p: P) =>
+  base([<path d="M4 7h16" />, <path d="M10 11v6M14 11v6" />, <path d="M6 7l1 13h10l1-13" />, <path d="M9 7V4h6v3" />], p);
+
+export const PeopleIcon = (p: P) =>
+  base([<circle cx="9" cy="8" r="3.2" />, <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />, <path d="M16 4.5a3 3 0 010 6M18 14c2 .8 3 2.8 3 6" />], p);
+
+export const CheckIcon = (p: P) => base([<path d="M5 12.5l4.5 4.5L19 7" />], p);
