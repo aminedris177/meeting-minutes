@@ -8,7 +8,12 @@ import pkg from './package.json' with { type: 'json' };
 const base = process.env.BASE_PATH ?? '/meeting-minutes/';
 
 export default defineConfig({
-  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    // رقم الـ commit (من GitHub Actions) وتاريخ البناء — علشان تعرف الموبايل شغال على أنهي نسخة
+    __BUILD_ID__: JSON.stringify((process.env.GITHUB_SHA ?? 'local').slice(0, 7)),
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+  },
   base,
   plugins: [
     preact(),

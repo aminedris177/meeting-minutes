@@ -4,6 +4,7 @@ import { ChevronIcon, PeopleIcon } from '../../components/icons';
 import { useLive } from '../../db/live';
 import { db } from '../../db/schema';
 import { fmt, t } from '../../i18n';
+import { formatDate } from '../../lib/dates';
 import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../../lib/platform';
 import { OrgCard } from './OrgCard';
 
@@ -62,6 +63,8 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
         <h2>{m.about}</h2>
         <p class="muted">
           {m.version}: <span dir="ltr">{__APP_VERSION__}</span>
+          <br />
+          {m.build}: <span dir="ltr">{__BUILD_ID__} · {formatDate(__BUILD_DATE__)}</span>
         </p>
         <p class="muted">{offlineReady || navigator.serviceWorker?.controller ? m.offlineReady : m.offlineNotReady}</p>
       </section>
