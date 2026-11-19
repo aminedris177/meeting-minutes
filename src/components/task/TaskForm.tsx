@@ -55,6 +55,8 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
     return { members, others };
   }, [series, people, f.ownerId]);
 
+  const topicChoices = [...new Set((series?.defaultTopics ?? []).map((tp) => tp.trim()).filter(Boolean))];
+
   const descError = tried && !f.description.trim();
 
   const save = async () => {
@@ -114,17 +116,24 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
         <label for="task-topic">{m.topic}</label>
         <input
           id="task-topic"
-          list="task-topics"
           value={f.topic}
           placeholder={m.topicPlaceholder}
           autoComplete="off"
           onInput={(e) => set('topic', e.currentTarget.value)}
         />
-        <datalist id="task-topics">
-          {(series?.defaultTopics ?? []).map((tp) => (
-            <option value={tp} />
-          ))}
-        </datalist>
+        {/* محاور السلسلة كأزرار (datalist مش شغال كويس على الموبايل) — لمسة تانية على نفس المحور تشيله */}
+        {topicChoices.length > 0 && (
+          <div class="topic-chips">
+            {topicChoices.map((tp) => {
+              const on = f.topic.trim() === tp;
+              return (
+                <button type="button" class={`chip ${on ? 'on' : ''}`} aria-pressed={on} onClick={() => set('topic', on ? '' : tp)}>
+                  {tp}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div class="field">

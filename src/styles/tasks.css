@@ -342,3 +342,15 @@
   font-size: 0.92rem;
   white-space: pre-wrap;
 }
+
+/* محاور السلسلة كأزرار تحت خانة المحور */
+.topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.topic-chips .chip {
+  min-height: 34px;
+  padding: 0 12px;
+}
