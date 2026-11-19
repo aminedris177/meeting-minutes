@@ -80,8 +80,76 @@ export interface Meeting {
   topics: string[];
   status: MeetingStatus;
   notes: string;
+  /** وقت ما بقى نهائي */
+  finalizedAt?: number;
+  /**
+   * لقطة من المحضر وقت ما بقى نهائي — علشان إعادة التصدير من الأرشيف تطلع نفس المحضر
+   * بالظبط حتى لو حالات المهام اتغيرت بعد كده. (اللوجو مش جواها — بيتاخد من الجهة.)
+   */
+  snapshot?: MinutesModel;
   createdAt: number;
   updatedAt: number;
+}
+
+// ===== نموذج المحضر (للمعاينة والتصدير Word/PDF) =====
+
+export interface MinutesAttendee {
+  name: string;
+  /** المسمى أو القسم */
+  position: string;
+  present: boolean;
+  guest: boolean;
+}
+
+export interface MinutesReviewRow {
+  code: string;
+  topic: string;
+  owner: string;
+  update: string;
+  nextAction: string;
+  status: TaskStatus;
+  targetDate?: ISODate;
+  delay: number;
+}
+
+export interface MinutesDecision {
+  text: string;
+  taskCode?: string;
+}
+
+export interface MinutesNewTask {
+  code: string;
+  topic: string;
+  description: string;
+  owner: string;
+  targetDate?: ISODate;
+  priority: TaskPriority;
+}
+
+export interface MinutesRegisterRow {
+  item: string;
+  text: string;
+  status: RegisterStatus;
+  isNew: boolean;
+}
+
+export interface MinutesModel {
+  orgName: string;
+  seriesName: string;
+  colors: SeriesColors;
+  sections: SeriesSections;
+  registerName: string;
+  number: number;
+  date: ISODate;
+  nextDate?: ISODate;
+  topics: string[];
+  notes: string;
+  attendees: MinutesAttendee[];
+  review: MinutesReviewRow[];
+  decisions: MinutesDecision[];
+  newTasks: MinutesNewTask[];
+  register: MinutesRegisterRow[];
+  status: MeetingStatus;
 }
 
 export interface Attendance {
@@ -142,12 +210,17 @@ export interface Decision {
   order: number;
 }
 
+/** حالة بند السجل التراكمي */
+export type RegisterStatus = 'approved' | 'amended' | 'cancelled';
+
 export interface RegisterItem {
   id: ID;
   seriesId: ID;
+  /** البند: اسم/عنوان قصير */
   item: string;
   text: string;
-  status: string;
+  status: RegisterStatus;
+  /** الاجتماع اللي اتعتمد (أو اتعدّل) فيه */
   meetingId?: ID;
   createdAt: number;
 }

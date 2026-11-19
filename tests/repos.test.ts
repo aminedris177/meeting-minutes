@@ -149,3 +149,13 @@ describe('people bulk add', () => {
     expect(await d.people.count()).toBe(2);
   });
 });
+
+describe('org concurrent saves', () => {
+  it('saving name and logo at the same time keeps both', async () => {
+    const d = freshDb();
+    await Promise.all([saveOrgName('جهة', d), saveOrgLogo(new Blob(['x'], { type: 'image/png' }), d)]);
+    const org = await getOrg(d);
+    expect(org.name).toBe('جهة');
+    expect(org.logo).toBeDefined();
+  });
+});

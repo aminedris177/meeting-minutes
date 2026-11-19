@@ -15,6 +15,8 @@ interface Props {
   people: Person[];
   defaultSeriesId?: ID;
   meetingId?: ID;
+  /** تاريخ الإدراج الافتراضي (في الاجتماع = تاريخ الاجتماع) */
+  defaultCreatedDate?: ISODate;
   onClose: () => void;
   onSaved?: (t: Task) => void;
 }
@@ -29,7 +31,7 @@ interface FormState {
   priority: TaskPriority;
 }
 
-export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId, onClose, onSaved }: Props) {
+export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId, defaultCreatedDate, onClose, onSaved }: Props) {
   const m = t().task;
   const active = seriesList.filter((s) => !s.archived || s.id === task?.seriesId);
   const [f, setF] = useState<FormState>(() => ({
@@ -37,7 +39,7 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
     description: task?.description ?? '',
     topic: task?.topic ?? '',
     ownerId: task?.ownerId ?? null,
-    createdDate: task?.createdDate ?? todayISO(),
+    createdDate: task?.createdDate ?? defaultCreatedDate ?? todayISO(),
     targetDate: task?.targetDate,
     priority: task?.priority ?? 'medium',
   }));

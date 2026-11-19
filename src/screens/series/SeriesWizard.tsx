@@ -132,9 +132,14 @@ function WizardBody({ existing }: { existing?: Series }) {
     }
     setBusy(true);
     try {
-      if (existing) await updateSeries(existing.id, full);
-      else await createSeries(full);
-      navigate('/');
+      // بعد الحفظ: صفحة السلسلة (منها بيبدأ الاجتماع)
+      if (existing) {
+        await updateSeries(existing.id, full);
+        navigate(`/series/${existing.id}`);
+      } else {
+        const created = await createSeries(full);
+        navigate(`/series/${created.id}`);
+      }
     } catch (e) {
       alert(fmt(t().common.error, { msg: String(e) }));
     } finally {

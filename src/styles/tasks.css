@@ -354,3 +354,274 @@
   min-height: 34px;
   padding: 0 12px;
 }
+
+/* ===== الاجتماعات ===== */
+.header-sub {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.saved-tag {
+  flex: none;
+  font-size: 0.72rem;
+  color: var(--ok);
+  font-weight: 600;
+}
+.meeting .steps .step-tab {
+  min-width: 46px;
+}
+.meeting-number {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.meeting-number b {
+  font-size: 1.4rem;
+  color: var(--primary);
+}
+.link-btn {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--secondary);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.btn-row.tight {
+  margin: 4px 0 8px;
+}
+
+/* الحضور */
+.att-li {
+  display: flex;
+  align-items: center;
+}
+.att-row {
+  padding-inline: 4px;
+}
+.att-row.off .list-title {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-color: rgba(0, 0, 0, 0.25);
+}
+.att-state {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.att-state.yes {
+  color: var(--ok);
+}
+.att-state.no {
+  color: var(--danger);
+}
+
+/* المراجعة */
+.review-card {
+  border-inline-start: 4px solid var(--secondary);
+}
+.review-card.overdue {
+  border-inline-start-color: var(--danger);
+  background: #fff8f8;
+}
+.late-tag {
+  margin-inline-start: auto;
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+.prev-update {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--light);
+  font-size: 0.9rem;
+}
+.prev-update p {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+}
+.prev-update small {
+  color: var(--muted);
+  font-weight: 600;
+}
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 12px;
+}
+.status-row .status {
+  cursor: pointer;
+  min-height: 38px;
+  border: 2px solid transparent;
+  opacity: 0.55;
+}
+.status-row .status.picked {
+  opacity: 1;
+  border-color: var(--c);
+}
+
+/* القرارات */
+.decision {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 0;
+}
+.decision-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.decision-top textarea {
+  flex: 1;
+}
+.decision .order,
+.reg-row .order {
+  width: 22px;
+  flex: none;
+  padding-top: 10px;
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+}
+.reg-row .order {
+  padding-top: 0;
+}
+select.decision-task {
+  min-height: 38px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* مهام جديدة / السجل */
+.new-task-row .code {
+  flex: none;
+  min-width: 52px;
+}
+.reg-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.reg-approved {
+  background: #e3f3e4;
+  color: var(--ok);
+}
+.reg-amended {
+  background: #fdf0d9;
+  color: #9a5b00;
+}
+.reg-cancelled {
+  background: #f0f0f0;
+  color: #7b8794;
+}
+.new-badge {
+  background: var(--cream);
+  color: var(--warn);
+  font-size: 0.72rem;
+}
+
+/* المعاينة والتصدير */
+.minutes-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.export-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.final-tag {
+  margin: 0;
+  padding: 8px;
+  border-radius: 10px;
+  background: #e3f3e4;
+  color: var(--ok);
+  font-weight: 700;
+  text-align: center;
+}
+
+/* صفحة السلسلة / الاجتماعات */
+.series-hero {
+  border-inline-start: 5px solid var(--series, var(--primary));
+}
+.hero-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.hero-row b {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+b.late,
+.hero-row b.late {
+  color: var(--danger);
+}
+.btn.big {
+  min-height: 52px;
+  font-size: 1.05rem;
+}
+button.nav-card {
+  width: 100%;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.section-title {
+  margin: 8px 0 0;
+  color: var(--primary);
+  font-size: 1.05rem;
+}
+.avatar.num {
+  font-size: 0.95rem;
+}
+.draft-badge {
+  background: var(--cream);
+  color: var(--warn);
+}
+.final-badge {
+  background: #e3f3e4;
+  color: var(--ok);
+}
+.meeting-series {
+  border-inline-start: 5px solid var(--series, var(--primary));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ms-head {
+  color: inherit;
+  text-decoration: none;
+}
+.ms-head h2 {
+  margin: 0;
+  color: var(--text);
+}
+.ms-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.92rem;
+}
+.ms-dates a {
+  color: inherit;
+  text-decoration: none;
+}
+.flush-title {
+  margin: 0;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.btn.flat {
+  border-radius: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}

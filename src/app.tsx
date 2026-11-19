@@ -9,7 +9,10 @@ import { segments, useHashPath } from './lib/router';
 import { HomeScreen } from './screens/Home';
 import { PeopleScreen } from './screens/people/People';
 import { FollowupScreen } from './screens/Followup';
-import { ArchiveScreen, MeetingsScreen } from './screens/placeholders';
+import { ArchiveScreen } from './screens/Archive';
+import { MeetingScreen } from './screens/meeting/MeetingScreen';
+import { MeetingsScreen } from './screens/Meetings';
+import { SeriesPage } from './screens/series/SeriesPage';
 import { TaskPage } from './screens/TaskPage';
 import { SeriesWizard } from './screens/series/SeriesWizard';
 import { SettingsScreen } from './screens/settings/Settings';
@@ -21,7 +24,7 @@ export function App() {
   const segs = segments(path);
   const seg = segs[0] ?? '';
   // الشاشات اللي بملء الشاشة (معالجات) من غير الشريط السفلي
-  const fullscreen = seg === 'series';
+  const fullscreen = (seg === 'series' && (segs[1] === 'new' || segs[2] === 'edit')) || seg === 'meeting';
 
   const {
     needRefresh: [needRefresh, setNeedRefresh],
@@ -82,7 +85,17 @@ export function App() {
         segs[1] === 'people' ? <PeopleScreen /> : <SettingsScreen offlineReady={offlineReady} onShowInstall={reopenInstall} />;
       break;
     case 'series':
-      screen = <SeriesWizard key={segs[1]} id={segs[1] === 'new' ? undefined : segs[1]} />;
+      screen =
+        segs[1] === 'new' ? (
+          <SeriesWizard key="new" />
+        ) : segs[2] === 'edit' ? (
+          <SeriesWizard key={segs[1]} id={segs[1]} />
+        ) : (
+          <SeriesPage key={segs[1]} id={segs[1] ?? ''} />
+        );
+      break;
+    case 'meeting':
+      screen = <MeetingScreen key={segs[1]} id={segs[1] ?? ''} />;
       break;
     default:
       screen = <HomeScreen />;
@@ -105,7 +118,7 @@ export function App() {
           setOfflineToast(false);
         }}
       />
-      {!fullscreen && <BottomNav active={seg === 'task' ? 'followup' : seg} />}
+      {!fullscreen && <BottomNav active={seg === 'task' ? 'followup' : seg === 'series' ? '' : seg} />}
     </div>
   );
 }

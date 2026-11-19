@@ -1,0 +1,232 @@
+/* ===== المحضر (A4 بعرض 794px) — نفس الشكل للمعاينة والطباعة والـ PDF ===== */
+.minutes {
+  width: 794px;
+  box-sizing: border-box;
+  padding: 40px 44px;
+  background: #fff;
+  color: #1b2430;
+  font-family: 'Cairo', Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  /* مهم للـ PDF: من غير letter-spacing علشان الحروف العربي تفضل متشبكة */
+  letter-spacing: 0;
+  word-spacing: 0;
+  text-align: right;
+}
+.minutes * {
+  letter-spacing: 0;
+}
+.mv-org {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.mv-org img {
+  max-height: 56px;
+  max-width: 140px;
+  object-fit: contain;
+}
+.mv-org span {
+  font-size: 15px;
+  font-weight: 700;
+}
+.mv-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px;
+  color: #fff;
+}
+.mv-band strong {
+  font-size: 20px;
+  line-height: 1.4;
+}
+.mv-band span {
+  font-size: 14px;
+}
+.mv-info {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  margin: 2px -3px 0;
+  width: calc(100% + 6px);
+}
+.mv-info td {
+  background: var(--ml);
+  padding: 6px 10px;
+  color: #1f3864;
+  width: 33.3%;
+}
+.mv-draft {
+  margin: 8px 0 0;
+  padding: 4px 10px;
+  border: 1px dashed #b26a00;
+  color: #b26a00;
+  text-align: center;
+  font-weight: 700;
+}
+.mv-section {
+  margin-top: 16px;
+}
+.mv-h {
+  margin: 0 0 6px;
+  padding-bottom: 3px;
+  border-bottom: 2px solid var(--ms);
+  color: var(--mp);
+  font-size: 15px;
+  font-weight: 700;
+}
+.mv-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+.mv-table th {
+  color: #fff;
+  font-weight: 700;
+  padding: 5px 6px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.mv-table td {
+  padding: 5px 6px;
+  border: 1px solid #dfe5ec;
+  vertical-align: top;
+}
+.mv-table tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.mv-table .n,
+.mv-table .c {
+  width: 28px;
+  text-align: center;
+}
+.mv-table .code {
+  width: 58px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--mp);
+  white-space: nowrap;
+}
+.mv-table .wide {
+  width: 40%;
+}
+.mv-table .date {
+  white-space: nowrap;
+  text-align: center;
+}
+.mv-table .box {
+  font-size: 15px;
+  line-height: 1.2;
+}
+.mv-att td:nth-child(3) {
+  border-left: 2px solid #c7d0da;
+}
+.mv-next {
+  margin-top: 4px;
+  padding: 3px 6px;
+  background: var(--ml);
+  border-radius: 3px;
+  font-size: 12px;
+}
+.mv-sub {
+  color: #5d6b7a;
+  font-size: 11.5px;
+}
+.mv-status {
+  text-align: center;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.mv-status.s-done {
+  color: #2e7d32;
+}
+.mv-status.s-in_progress {
+  color: #1559a8;
+}
+.mv-status.s-blocked {
+  color: #9a5b00;
+}
+.mv-status.s-cancelled {
+  color: #7b8794;
+}
+.mv-late {
+  color: #c62828;
+  font-size: 11px;
+  font-weight: 600;
+}
+.mv-list {
+  margin: 0;
+  padding-inline-start: 22px;
+}
+.mv-list li {
+  margin-bottom: 3px;
+}
+.mv-ref {
+  color: var(--mp);
+  font-weight: 700;
+}
+.mv-notes {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.mv-new td:first-child {
+  box-shadow: inset -3px 0 0 var(--ms);
+}
+.mv-sign td {
+  height: 34px;
+  vertical-align: middle;
+}
+
+/* ===== معاينة مصغّرة ===== */
+.scaled-outer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+.scaled-inner {
+  transform-origin: top right;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/* ===== طباعة: المحضر بس ===== */
+#print-root {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm 10mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  body > *:not(#print-root) {
+    display: none !important;
+  }
+  #print-root {
+    display: block !important;
+  }
+  #print-root .minutes {
+    width: auto;
+    padding: 0;
+  }
+  .mv-band,
+  .mv-table th,
+  .mv-info td,
+  .mv-table tr,
+  .mv-next {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .mv-table thead {
+    display: table-header-group;
+  }
+}

@@ -14,12 +14,14 @@ export function OrgCard() {
   const fileRef = useRef<HTMLInputElement>(null);
   const logoUrl = useObjectUrl(org?.logo);
   const loaded = useRef(false);
+  // المستخدم كتب حاجة؟ — ساعتها القيمة المحمّلة متكتبش فوق كلامه
+  const typed = useRef(false);
 
   // عبّي الاسم مرة واحدة أول ما البيانات تيجي
   useEffect(() => {
     if (org && !loaded.current) {
       loaded.current = true;
-      setName(org.name);
+      if (!typed.current) setName(org.name);
     }
   }, [org]);
 
@@ -29,7 +31,8 @@ export function OrgCard() {
   };
 
   const commitName = async () => {
-    if (!org || name.trim() === org.name) return;
+    const current = org ?? (await getOrg());
+    if (name.trim() === current.name) return;
     await saveOrgName(name);
     flash();
   };
@@ -54,7 +57,7 @@ export function OrgCard() {
         <h2>{m.title}</h2>
         {savedFlash && <span class="saved">{m.saved} ✓</span>}
       </div>
-      <TextField label={m.name} value={name} onInput={setName} onBlur={commitName} placeholder={m.namePlaceholder} />
+      <TextField label={m.name} value={name} onInput={(v) => ((typed.current = true), setName(v))} onBlur={commitName} placeholder={m.namePlaceholder} />
 
       <div class="field">
         <span class="label">{m.logo}</span>

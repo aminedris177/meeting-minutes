@@ -5,6 +5,7 @@ import '@fontsource/cairo/700.css';
 import './styles/main.css';
 import './styles/components.css';
 import './styles/tasks.css';
+import './styles/minutes.css';
 import { App } from './app';
 import { setLang } from './i18n';
 import { captureInstallPrompt } from './lib/install';
