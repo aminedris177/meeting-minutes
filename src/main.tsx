@@ -6,12 +6,13 @@ import './styles/main.css';
 import './styles/components.css';
 import './styles/tasks.css';
 import './styles/minutes.css';
+import './styles/dir.css';
 import { App } from './app';
-import { setLang } from './i18n';
+import { initialLang, setLang } from './i18n';
 import { captureInstallPrompt } from './lib/install';
 import { requestPersistentStorage } from './lib/platform';
 
-setLang('ar');
+setLang(initialLang());
 captureInstallPrompt();
 // اطلب التخزين الدائم أول ما التطبيق يفتح
 void requestPersistentStorage();

@@ -1,0 +1,35 @@
+/* ===== الاتجاه: العربي RTL (الأساس) والإنجليزي LTR =====
+   أغلب الـ CSS بخصائص منطقية (inline-start/end) وبيقلب لوحده.
+   هنا بس الحاجات اللي مينفعش تتكتب منطقي. */
+
+/* خلايا بأرقام/تواريخ اتجاهها LTR بس محاذاتها مع بداية السطر */
+.align-start {
+  text-align: right;
+}
+html[dir='ltr'] .align-start,
+html[dir='ltr'] .date-display > span,
+html[dir='ltr'] .mp-info b,
+html[dir='ltr'] .mp-table td:nth-child(2),
+html[dir='ltr'] .details dd.ltr-cell,
+html[dir='ltr'] .tl-date {
+  text-align: left;
+}
+
+/* سهم القوائم المنسدلة في آخر الخانة */
+html[dir='ltr'] select:not(.title-select),
+html[dir='ltr'] .filter-row select {
+  background-position: right 12px center;
+}
+
+/* المعاينة المصغّرة بتتثبت من بداية السطر */
+html[dir='ltr'] .scaled-inner {
+  transform-origin: top left;
+  right: auto;
+  left: 0;
+}
+
+/* الأسهم: «رجوع» و«للأمام» بيتقلبوا حسب الاتجاه (الأيقونة الأصلية بتشاور شمال) */
+html[dir='rtl'] .chev-back,
+html[dir='ltr'] .chev-fwd {
+  transform: scaleX(-1);
+}

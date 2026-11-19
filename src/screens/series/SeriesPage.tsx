@@ -1,6 +1,6 @@
 // صفحة السلسلة: الاجتماع القادم، بدء/استكمال اجتماع، قائمة الاجتماعات، والمهام.
 import { useState } from 'preact/hooks';
-import { FollowupPdfButton } from '../../components/FollowupPdfButton';
+import { FollowupExportButtons } from '../../components/FollowupExportButtons';
 import { EmptyState, Screen } from '../../components/Screen';
 import { ChevronIcon, PlusIcon, SettingsIcon } from '../../components/icons';
 import { useLive } from '../../db/live';
@@ -103,8 +103,8 @@ function SeriesBody({ id }: { id: string }) {
           <ChevronIcon />
         </button>
       )}
+      <FollowupExportButtons seriesId={id} />
       <div class="btn-row tight">
-        <FollowupPdfButton seriesId={id} class="btn ghost grow" />
         <button class="btn ghost grow" onClick={() => void runSeriesExport(id).catch((e) => alert(String(e)))}>
           {t().backup.exportSeries}
         </button>
@@ -119,7 +119,7 @@ function SeriesBody({ id }: { id: string }) {
               <a class="list-row" href={`#/meeting/${mt.id}`}>
                 <span class="avatar num">{mt.number}</span>
                 <span class="list-main">
-                  <span class="list-title" dir="ltr" style={{ textAlign: 'right' }}>
+                  <span class="list-title align-start" dir="ltr">
                     {formatDate(mt.date)}
                   </span>
                   <span class="list-sub">{fmt(ms.meetingN, { n: mt.number })}</span>

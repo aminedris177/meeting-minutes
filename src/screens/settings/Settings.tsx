@@ -7,6 +7,7 @@ import { fmt, t } from '../../i18n';
 import { formatDate } from '../../lib/dates';
 import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../../lib/platform';
 import { BackupCard } from './BackupCard';
+import { LanguageCard } from './LanguageCard';
 import { OrgCard } from './OrgCard';
 import { PinCard } from './PinCard';
 
@@ -32,6 +33,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
 
   return (
     <Screen title={m.title}>
+      <LanguageCard />
       <OrgCard />
 
       <a class="card nav-card" href="#/settings/people">

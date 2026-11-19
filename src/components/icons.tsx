@@ -76,7 +76,7 @@ export const GripIcon = (p: P) =>
 export const PlusIcon = (p: P) => base([<path d="M12 5v14M5 12h14" />], p);
 
 /** سهم «للأمام» في RTL (يشاور شمال) */
-export const ChevronIcon = (p: P) => base([<path d="M15 6l-6 6 6 6" />], p);
+export const ChevronIcon = (p: P) => base([<path d="M15 6l-6 6 6 6" />], { class: 'chev-fwd', ...p });
 
 export const TrashIcon = (p: P) =>
   base([<path d="M4 7h16" />, <path d="M10 11v6M14 11v6" />, <path d="M6 7l1 13h10l1-13" />, <path d="M9 7V4h6v3" />], p);

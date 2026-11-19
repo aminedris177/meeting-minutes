@@ -1,5 +1,6 @@
 // بناء ملف Word للمحضر (من غير DOM — بيتختبر في Node).
-// RTL: كل فقرة bidirectional، وكل جدول visuallyRightToLeft، وكل نص rightToLeft. الخط Arial.
+// الاتجاه حسب لغة التطبيق: بالعربي كل فقرة bidirectional، وكل جدول visuallyRightToLeft، وكل نص rightToLeft.
+// بالإنجليزي كله LTR. الخط Arial.
 import {
   AlignmentType,
   BorderStyle,
@@ -18,7 +19,7 @@ import {
 } from 'docx';
 import type { MinutesModel, TaskStatus } from '../db/types';
 import { CREAM_COLOR, LIGHT_COLOR } from '../domain/series';
-import { fmt, t } from '../i18n';
+import { fmt, isRtl, t } from '../i18n';
 import { formatDate } from '../lib/dates';
 
 export interface DocxLogo {
@@ -56,7 +57,7 @@ function run(text: string, o: RunOpts = {}): TextRun {
     size: o.size ? o.size * 2 : undefined,
     color: o.color ? hex(o.color) : undefined,
     font: { ascii: o.font ?? FONT, hAnsi: o.font ?? FONT, cs: o.font ?? FONT, eastAsia: o.font ?? FONT },
-    rightToLeft: true,
+    rightToLeft: isRtl(),
   });
 }
 
@@ -80,10 +81,13 @@ interface ParaOpts {
 }
 
 function para(children: ParagraphChild[] | string, o: ParaOpts = {}): Paragraph {
-  const align = o.align === 'center' ? AlignmentType.CENTER : o.align === 'left' ? AlignmentType.LEFT : AlignmentType.RIGHT;
+  // 'right' = بداية السطر (يمين في العربي، شمال في الإنجليزي)
+  const rtl = isRtl();
+  const align =
+    o.align === 'center' ? AlignmentType.CENTER : (o.align === 'left') === rtl ? AlignmentType.LEFT : AlignmentType.RIGHT;
   return new Paragraph({
     children: typeof children === 'string' ? [run(children)] : children,
-    bidirectional: true,
+    bidirectional: rtl,
     alignment: align,
     spacing: { after: o.after ?? 0, before: o.before ?? 0, line: 276 },
     keepNext: o.keepNext,
@@ -117,7 +121,7 @@ function table(rows: TableRow[], widths: number[], o: { borders?: boolean } = {}
     rows,
     columnWidths: widths,
     width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
-    visuallyRightToLeft: true,
+    visuallyRightToLeft: isRtl(),
     borders: o.borders === false ? undefined : borders,
   });
 }

@@ -3,6 +3,7 @@ import { backupFileName, exportBackup, exportSeriesFile } from '../db/backup';
 import { SETTING, setSetting } from '../db/repos/settings';
 import { safeFileName, shareOrDownload } from '../export/share';
 import { todayISO } from './dates';
+import { t } from '../i18n';
 
 export async function runBackupExport(): Promise<boolean> {
   const backup = await exportBackup(__APP_VERSION__);
@@ -21,7 +22,7 @@ export async function runSeriesExport(seriesId: string): Promise<void> {
   const file = await exportSeriesFile(seriesId);
   const blob = new Blob([JSON.stringify(file, null, 1)], { type: 'application/json' });
   try {
-    await shareOrDownload(blob, `${safeFileName(`سلسلة_${file.series.name}`)}.json`, file.series.name);
+    await shareOrDownload(blob, `${safeFileName(`${t().files.series}_${file.series.name}`)}.json`, file.series.name);
   } catch (e) {
     if ((e as Error).name !== 'AbortError') throw e;
   }

@@ -2,7 +2,7 @@
 import type { Person, Series, Task, TaskUpdate } from '../db/types';
 import { displayName } from '../db/repos/people';
 import { CREAM_COLOR, LIGHT_COLOR } from '../domain/series';
-import { t } from '../i18n';
+import { dir, t } from '../i18n';
 import { formatDate, type ISODate } from '../lib/dates';
 
 export interface FollowupRow {
@@ -27,7 +27,7 @@ export function FollowupReport({ data, logoUrl }: { data: FollowupData; logoUrl?
   const { series } = data;
   const th = { background: series.colors.secondary };
   return (
-    <article class="minutes report" dir="rtl" style={{ width: '1123px', '--mp': series.colors.primary, '--ms': series.colors.secondary, '--ml': LIGHT_COLOR }}>
+    <article class="minutes report" dir={dir()} style={{ width: '1123px', '--mp': series.colors.primary, '--ms': series.colors.secondary, '--ml': LIGHT_COLOR }}>
       <header class="mv-block mv-head" data-block>
         {(logoUrl || data.orgName) && (
           <div class="mv-org">
@@ -100,7 +100,7 @@ export function FollowupReport({ data, logoUrl }: { data: FollowupData; logoUrl?
                     </div>
                   )}
                   {r.latest && (
-                    <div class="mv-sub" dir="ltr" style={{ textAlign: 'right' }}>
+                    <div class="mv-sub align-start" dir="ltr">
                       {formatDate(r.latest.date)}
                     </div>
                   )}

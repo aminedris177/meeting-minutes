@@ -30,16 +30,17 @@ type Field = 'code' | 'topic' | 'description' | 'owner' | 'created' | 'target' |
 
 // أسماء الأعمدة المقبولة لكل حقل (بعد تنظيف المسافات)
 const ALIASES: Record<Field, string[]> = {
-  code: ['الرقم', 'رقم', 'رقم المهمة', 'الكود', 'م'],
-  topic: ['المحور', 'محور'],
-  description: ['المهمة', 'الوصف', 'البند', 'وصف المهمة', 'المهمه'],
-  owner: ['المسؤول', 'المسئول', 'مسؤول التنفيذ'],
-  created: ['تاريخ الإدراج', 'تاريخ الادراج', 'الإدراج', 'تاريخ الإضافة'],
-  target: ['الموعد المستهدف', 'التاريخ المستهدف', 'الموعد', 'تاريخ الاستحقاق'],
-  closed: ['تاريخ الإغلاق', 'تاريخ الاغلاق'],
-  status: ['الحالة', 'حالة'],
-  update: ['آخر تحديث', 'اخر تحديث', 'التحديث', 'النتيجة / آخر تحديث', 'النتيجة'],
-  next: ['المطلوب للاجتماع القادم', 'المطلوب', 'الخطوة القادمة'],
+  // عربي + إنجليزي (الإنجليزي lowercase — المقارنة بتتجاهل حالة الحروف)
+  code: ['الرقم', 'رقم', 'رقم المهمة', 'الكود', 'م', 'no.', 'no', 'code', 'id', '#'],
+  topic: ['المحور', 'محور', 'topic'],
+  description: ['المهمة', 'الوصف', 'البند', 'وصف المهمة', 'المهمه', 'task', 'description'],
+  owner: ['المسؤول', 'المسئول', 'مسؤول التنفيذ', 'owner', 'responsible'],
+  created: ['تاريخ الإدراج', 'تاريخ الادراج', 'الإدراج', 'تاريخ الإضافة', 'date added', 'created'],
+  target: ['الموعد المستهدف', 'التاريخ المستهدف', 'الموعد', 'تاريخ الاستحقاق', 'target date', 'due date', 'due'],
+  closed: ['تاريخ الإغلاق', 'تاريخ الاغلاق', 'closed on', 'closed date'],
+  status: ['الحالة', 'حالة', 'status'],
+  update: ['آخر تحديث', 'اخر تحديث', 'التحديث', 'النتيجة / آخر تحديث', 'النتيجة', 'latest update', 'update', 'result / latest update', 'result'],
+  next: ['المطلوب للاجتماع القادم', 'المطلوب', 'الخطوة القادمة', 'required for next meeting', 'next action'],
 };
 
 const clean = (s: unknown) =>
@@ -48,12 +49,12 @@ const clean = (s: unknown) =>
     .trim();
 
 const STATUS_MAP: [RegExp, TaskStatus][] = [
-  [/ملغ/, 'cancelled'],
-  [/^تم|مغلق|منته|مكتمل/, 'done'],
-  [/معل[ّ]?ق|متوقف|انتظار/, 'blocked'],
-  // «لم يبدأ» قبل «جارٍ» — علشان كلمة «بدأ» جواها متتقريش كبداية تنفيذ
-  [/لم يبدأ|لم يتم البدء|جديد/, 'not_started'],
-  [/جار|قيد التنفيذ|بدأ/, 'in_progress'],
+  [/ملغ|cancel/i, 'cancelled'],
+  [/^تم|مغلق|منته|مكتمل|^done|^closed|complete/i, 'done'],
+  [/معل[ّ]?ق|متوقف|انتظار|blocked|waiting|on hold/i, 'blocked'],
+  // «لم يبدأ» قبل «جارٍ» — علشان كلمة «بدأ» جواها متتقريش كبداية تنفيذ (ونفس الفكرة لـ not started)
+  [/لم يبدأ|لم يتم البدء|جديد|not started|^new/i, 'not_started'],
+  [/جار|قيد التنفيذ|بدأ|in progress|ongoing|started/i, 'in_progress'],
 ];
 
 export function mapStatus(raw: string): TaskStatus {
@@ -81,7 +82,7 @@ function findHeader(data: Cell[][]): { row: number; cols: Partial<Record<Field, 
     const cells = data[r].map(clean);
     const cols: Partial<Record<Field, number>> = {};
     for (const [field, names] of Object.entries(ALIASES) as [Field, string[]][]) {
-      const i = cells.findIndex((c) => names.includes(c));
+      const i = cells.findIndex((c) => names.includes(c.toLowerCase()));
       if (i >= 0) cols[field] = i;
     }
     if (cols.description !== undefined && (cols.code !== undefined || cols.owner !== undefined)) return { row: r, cols };

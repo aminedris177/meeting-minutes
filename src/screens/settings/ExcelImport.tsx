@@ -6,7 +6,7 @@ import { useLive } from '../../db/live';
 import { importTasks } from '../../db/repos/importTasks';
 import { db } from '../../db/schema';
 import { parseTaskSheets, type ParsedTask, type SheetInput } from '../../domain/excelImport';
-import { fmt, t } from '../../i18n';
+import { fmt, isRtl, t } from '../../i18n';
 import { formatDate, todayISO } from '../../lib/dates';
 
 export function ExcelImport({ onClose }: { onClose: () => void }) {
@@ -42,7 +42,7 @@ export function ExcelImport({ onClose }: { onClose: () => void }) {
     try {
       const res = await importTasks(target, rows, todayISO(), { createMissingPeople: createPeople });
       let msg = fmt(m.done, { added: res.added, people: res.newPeople });
-      if (res.skipped.length) msg += '\n' + fmt(m.skipped, { n: res.skipped.length, codes: res.skipped.slice(0, 10).join('، ') });
+      if (res.skipped.length) msg += '\n' + fmt(m.skipped, { n: res.skipped.length, codes: res.skipped.slice(0, 10).join(isRtl() ? '، ' : ', ') });
       alert(msg);
       onClose();
     } catch (e) {

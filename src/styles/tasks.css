@@ -296,7 +296,8 @@
 }
 .timeline li {
   position: relative;
-  padding: 0 18px 14px 0;
+  padding: 0 0 14px;
+  padding-inline-start: 18px;
   border-inline-start: 2px solid var(--border);
   margin-inline-start: 6px;
 }

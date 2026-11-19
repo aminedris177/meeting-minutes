@@ -4,7 +4,7 @@ import type { ComponentChildren } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { MinutesModel } from '../db/types';
 import { CREAM_COLOR, LIGHT_COLOR } from '../domain/series';
-import { fmt, t } from '../i18n';
+import { dir, fmt, t } from '../i18n';
 import { formatDate } from '../lib/dates';
 
 export const A4_WIDTH_PX = 794;
@@ -30,7 +30,7 @@ export function MinutesView({ model, logoUrl }: Props) {
   const right = model.attendees.slice(half);
 
   return (
-    <article class="minutes" dir="rtl" style={{ '--mp': colors.primary, '--ms': colors.secondary, '--ml': LIGHT_COLOR }}>
+    <article class="minutes" dir={dir()} style={{ '--mp': colors.primary, '--ms': colors.secondary, '--ml': LIGHT_COLOR }}>
       <header class="mv-block mv-head" data-block>
         {(logoUrl || model.orgName) && (
           <div class="mv-org">

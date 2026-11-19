@@ -61,7 +61,7 @@ export function ArchiveScreen() {
                         <a class="list-row" href={`#/meeting/${m.id}`}>
                           <span class="avatar num">{m.number}</span>
                           <span class="list-main">
-                            <span class="list-title" dir="ltr" style={{ textAlign: 'right' }}>
+                            <span class="list-title align-start" dir="ltr">
                               {formatDate(m.date)}
                             </span>
                             <span class="list-sub">{a.view}</span>

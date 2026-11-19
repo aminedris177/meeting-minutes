@@ -1,13 +1,12 @@
 // PDF: المستند بيترسم HTML في مكان مخفي، بيتقسم لصفحات A4 (من غير قطع صفوف)،
 // كل صفحة بتتصور بـ html2canvas كـ JPEG مضغوط، وبتتجمع بـ jsPDF.
 import { h, render, type VNode } from 'preact';
-import { FollowupReport, type FollowupData } from '../components/FollowupReport';
+import { FollowupReport } from '../components/FollowupReport';
 import { MinutesView } from '../components/MinutesView';
-import { latestTextUpdate, listTaskUpdates, queryTasks } from '../db/repos/tasks';
 import { db } from '../db/schema';
+import { buildFollowupData } from './followupData';
 import type { MinutesModel } from '../db/types';
 import { fmt, t } from '../i18n';
-import { todayISO } from '../lib/dates';
 import { waitForAssets } from '../lib/print';
 import { A4_LANDSCAPE, A4_PORTRAIT, paginate, type PageSize } from './paginate';
 import { minutesFileName, safeFileName, shareOrDownload } from './share';
@@ -78,24 +77,6 @@ export async function exportMinutesPdf(model: MinutesModel, logoUrl?: string): P
 
 // ===== ملف المتابعة لكل سلسلة =====
 
-export async function buildFollowupData(seriesId: string): Promise<FollowupData> {
-  const today = todayISO();
-  const [series, org] = await Promise.all([db.series.get(seriesId), db.org.get('org')]);
-  if (!series) throw new Error('Series not found');
-  const rows = await queryTasks({ seriesId, ownerId: 'all', status: 'all' }, today);
-  const withUpdates = await Promise.all(
-    rows.map(async (r) => ({ task: r.task, owner: r.owner, delay: r.delay, latest: latestTextUpdate(await listTaskUpdates(r.task.id)) })),
-  );
-  const open = rows.filter((r) => r.task.status !== 'done' && r.task.status !== 'cancelled').length;
-  return {
-    orgName: org?.name ?? '',
-    series,
-    today,
-    rows: withUpdates,
-    counts: { open, overdue: rows.filter((r) => r.delay > 0).length, done: rows.filter((r) => r.task.status === 'done').length, total: rows.length },
-  };
-}
-
 export async function exportFollowupPdf(seriesId: string): Promise<void> {
   const data = await buildFollowupData(seriesId);
   const logo = (await db.org.get('org'))?.logo;
@@ -105,7 +86,7 @@ export async function exportFollowupPdf(seriesId: string): Promise<void> {
     const blob = await renderPdf(h(FollowupReport, { data, logoUrl }), A4_LANDSCAPE, (p, n) =>
       `${data.series.name} — ${f.title}   ·   ${fmt(t().minutes.page, { n: p, total: n })}`,
     );
-    await shareOrDownload(blob, `${safeFileName(`متابعة_${data.series.name}_${data.today}`)}.pdf`, f.title);
+    await shareOrDownload(blob, `${safeFileName(`${t().xlsx.filePrefix}_${data.series.name}_${data.today}`)}.pdf`, f.title);
   } finally {
     if (logoUrl) URL.revokeObjectURL(logoUrl);
   }

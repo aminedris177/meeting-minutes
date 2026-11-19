@@ -30,7 +30,7 @@ export function paginate(source: HTMLElement, stage: HTMLElement, opts: Paginate
   const newPage = () => {
     const page = document.createElement('div');
     page.className = `${opts.pageClass} pdf-page`;
-    page.dir = 'rtl';
+    page.dir = source.getAttribute('dir') || 'rtl';
     Object.assign(page.style, {
       width: `${size.width}px`,
       height: `${size.height}px`,

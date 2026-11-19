@@ -5,6 +5,7 @@ import { InstallHint } from './components/InstallHint';
 import { LockScreen } from './components/LockScreen';
 import { useLive } from './db/live';
 import { getPin } from './lib/pin';
+import { useLang } from './lib/lang';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
 import { isStandalone } from './lib/platform';
@@ -24,6 +25,8 @@ const UPDATE_CHECK_MS = 60 * 60 * 1000; // فحص التحديثات كل ساع
 const RELOCK_MS = 60 * 1000; // القفل يرجع بعد دقيقة في الخلفية
 
 export function App() {
+  // تغيير اللغة بيعيد رسم كل الشاشات (key على العنصر الرئيسي)
+  const lang = useLang();
   const path = useHashPath();
   const segs = segments(path);
   const seg = segs[0] ?? '';
@@ -123,7 +126,7 @@ export function App() {
   }
 
   return (
-    <div class={`app ${fullscreen ? 'fullscreen' : ''}`}>
+    <div key={lang} class={`app ${fullscreen ? 'fullscreen' : ''}`}>
       {showInstall && seg === '' && (
         <div class="install-wrap">
           <InstallHint onDismiss={dismissInstall} />

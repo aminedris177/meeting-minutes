@@ -2,6 +2,7 @@
 // + تصدير/استيراد إعدادات سلسلة واحدة لجهاز تاني.
 import Dexie from 'dexie';
 import { nameKey } from '../domain/names';
+import { t } from '../i18n';
 import { AppDB, db, LATEST_VERSION, newId } from './schema';
 import { SETTING } from './repos/settings';
 import type { Person, Series } from './types';
@@ -87,7 +88,7 @@ export async function exportBackup(appVersion: string, d: AppDB = db): Promise<B
 
 export function backupFileName(date = new Date()): string {
   const p = (n: number) => String(n).padStart(2, '0');
-  return `نسخة_احتياطية_محاضر_${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}.json`;
+  return `${t().files.backup}_${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}.json`;
 }
 
 // ===== التحقق =====

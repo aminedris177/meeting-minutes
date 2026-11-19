@@ -11,7 +11,7 @@
   /* مهم للـ PDF: من غير letter-spacing علشان الحروف العربي تفضل متشبكة */
   letter-spacing: 0;
   word-spacing: 0;
-  text-align: right;
+  text-align: start;
 }
 .minutes * {
   letter-spacing: 0;
@@ -124,7 +124,7 @@
   line-height: 1.2;
 }
 .mv-att td:nth-child(3) {
-  border-left: 2px solid #c7d0da;
+  border-inline-end: 2px solid #c7d0da;
 }
 .mv-next {
   margin-top: 4px;
@@ -176,7 +176,7 @@
 }
 /* خط على الطرف (border مش box-shadow — html2canvas بيرسم الـ inset shadow غلط) */
 .mv-new td:first-child {
-  border-right: 3px solid var(--ms);
+  border-inline-start: 3px solid var(--ms);
 }
 .mv-sign td {
   height: 34px;
@@ -253,7 +253,7 @@
   font-weight: 700;
 }
 .report tr.row-late td:first-child {
-  border-right: 3px solid #c62828;
+  border-inline-start: 3px solid #c62828;
 }
 
 /* صفحات الـ PDF */

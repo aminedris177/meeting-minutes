@@ -1,6 +1,7 @@
 import { nameKey, normalizeTitle } from '../../domain/names';
 import { db, newId, type AppDB } from '../schema';
 import type { ID, Person } from '../types';
+import { t } from '../../i18n';
 
 export type PersonInput = Pick<Person, 'name' | 'title' | 'position' | 'email'>;
 
@@ -88,6 +89,11 @@ export async function removePerson(id: ID, d: AppDB = db): Promise<'deleted' | '
   });
 }
 
+/** عرض اللقب حسب اللغة (م/ ← Eng.)؛ لقب غير معروف بيتعرض زي ما هو. */
+export function titleLabel(title: string): string {
+  return t().titles[title] ?? title;
+}
+
 export function displayName(p: Pick<Person, 'name' | 'title'>): string {
-  return p.title ? `${p.title} ${p.name}` : p.name;
+  return p.title ? `${titleLabel(p.title)} ${p.name}` : p.name;
 }

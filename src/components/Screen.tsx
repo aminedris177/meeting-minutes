@@ -16,7 +16,7 @@ export function Screen({ title, back, actions, children }: Props) {
       <header class="screen-header">
         {back && (
           <a class="icon-btn back" href={back} aria-label={t().common.back}>
-            <ChevronIcon style={{ transform: 'scaleX(-1)' }} />
+            <ChevronIcon class="chev-back" />
           </a>
         )}
         <h1>{title}</h1>

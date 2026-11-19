@@ -188,7 +188,6 @@ export const ar = {
       all: 'الكل',
     },
     count: '{n} مهمة',
-    exportLater: 'تصدير ملف المتابعة PDF بييجي مع المرحلة 6.',
   },
 
   task: {
@@ -331,6 +330,25 @@ export const ar = {
     wipe: 'مسح كل البيانات',
     wiped: 'تم المسح. استرجع آخر نسخة احتياطية من الإعدادات.',
     tooMany: 'محاولات كتير — استنى {n} ثانية',
+  },
+
+  xlsx: {
+    button: 'ملف المتابعة Excel',
+    filePrefix: 'متابعة',
+    openSheet: 'المتابعة',
+    closedSheet: 'المغلق',
+    code: 'الرقم',
+    topic: 'المحور',
+    task: 'المهمة',
+    owner: 'المسؤول',
+    created: 'تاريخ الإدراج',
+    target: 'الموعد المستهدف',
+    status: 'الحالة',
+    delay: 'تأخير (يوم)',
+    latest: 'آخر تحديث',
+    next: 'المطلوب للاجتماع القادم',
+    closed: 'تاريخ الإغلاق',
+    result: 'النتيجة / آخر تحديث',
   },
 
   report: {
@@ -520,6 +538,18 @@ export const ar = {
     inBrowser: 'من داخل المتصفح (غير مثبّت)',
     offlineReady: 'جاهز للعمل بدون إنترنت',
     offlineNotReady: 'جارٍ تجهيز العمل بدون إنترنت…',
+    language: 'اللغة / Language',
+    languageHint: 'لغة الواجهة والمحاضر والملفات المصدّرة.',
+    langNames: { ar: 'العربية', en: 'English' },
+  },
+
+  /** عرض الألقاب المتخزنة (أ/ م/ د/) */
+  titles: { 'أ/': 'أ/', 'م/': 'م/', 'د/': 'د/' } as Record<string, string>,
+
+  files: {
+    minutes: 'محضر',
+    backup: 'نسخة_احتياطية_محاضر',
+    series: 'سلسلة',
   },
 
   install: {
