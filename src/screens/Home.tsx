@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 import { EmptyState, Screen } from '../components/Screen';
 import { BackupReminder } from '../components/BackupReminder';
-import { PlusIcon } from '../components/icons';
+import { HelpIcon, PlusIcon } from '../components/icons';
 import { useLive } from '../db/live';
 import { getOrg } from '../db/repos/org';
 import { listSeriesSummaries, type SeriesSummary } from '../db/repos/series';
@@ -19,7 +19,14 @@ export function HomeScreen() {
   const archived = summaries?.filter((s) => s.series.archived) ?? [];
 
   return (
-    <Screen title={m.title}>
+    <Screen
+      title={m.title}
+      actions={
+        <a class="icon-btn" href="#/help" aria-label={t().help.open}>
+          <HelpIcon />
+        </a>
+      }
+    >
       <BackupReminder />
       {org && !org.name && (
         <section class="card notice">

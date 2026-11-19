@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { Screen } from '../../components/Screen';
-import { ChevronIcon, PeopleIcon } from '../../components/icons';
+import { ChevronIcon, HelpIcon, PeopleIcon } from '../../components/icons';
 import { useLive } from '../../db/live';
 import { db } from '../../db/schema';
 import { fmt, t } from '../../i18n';
@@ -33,6 +33,14 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
 
   return (
     <Screen title={m.title}>
+      <a class="card nav-card" href="#/help">
+        <HelpIcon />
+        <span class="list-main">
+          <span class="list-title">{t().help.open}</span>
+          <span class="list-sub">{t().help.openHint}</span>
+        </span>
+        <ChevronIcon />
+      </a>
       <LanguageCard />
       <OrgCard />
 

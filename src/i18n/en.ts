@@ -543,6 +543,152 @@ export const en: Messages = {
 
   titles: { 'أ/': 'Mr./Ms.', 'م/': 'Eng.', 'د/': 'Dr.' },
 
+  help: {
+    title: 'User guide',
+    open: 'User guide',
+    openHint: 'How to do each thing in the app',
+    howToImport: 'How do I import?',
+    intro: 'Pick the topic you need. Steps are in the order you do them in the app.',
+    sections: [
+      {
+        id: 'start',
+        title: 'Getting started',
+        steps: [
+          'Install the app on your home screen: on iPhone from Safari → Share → “Add to Home Screen”; on Android from Chrome → “Install app”.',
+          'Always open the app from its icon, not from the browser.',
+          'Settings → Organization: enter the name and choose the logo. Both appear in the minutes header.',
+          'Settings → People directory: add people one by one, or all at once with “Paste list”.',
+        ],
+        tips: ['All data lives on this phone only. Take a backup every week from Settings.'],
+      },
+      {
+        id: 'series',
+        title: 'New meeting series',
+        steps: [
+          'Home → “New series”.',
+          'Name, then the numbering prefix: an English letter like Q, so tasks are numbered Q-01, Q-02 and so on.',
+          'Recurrence: weekly, every 2 weeks, monthly or every N days, and the first meeting date.',
+          'Attendees: “Choose from directory” or “Select all”, then drag ⠿ to reorder.',
+          'Default topics, then the minutes sections and colors, then “Create series”.',
+        ],
+        tips: ['Edit a series from its page → the gear icon.'],
+      },
+      {
+        id: 'meeting',
+        title: 'Holding a meeting',
+        steps: [
+          'Series page (or the Meetings tab) → “Start a new meeting”.',
+          'Details: date, next meeting and topics. The next meeting is calculated for you, and you can change it.',
+          'Attendance: tap a name to switch between present and absent; you can add a guest.',
+          'Review: for each open task pick the status with one tap, and write the update and what is required for next meeting.',
+          'Decisions, new tasks and the cumulative register.',
+          'Preview → “Approve minutes”, then export Word or PDF.',
+        ],
+        tips: ['Everything saves on its own. You can leave and continue the draft any time.'],
+      },
+      {
+        id: 'followup',
+        title: 'Task follow-up',
+        steps: [
+          'Follow-up tab: all tasks, overdue ones in red at the top.',
+          'Filter by series, owner or status, or search by task number.',
+          'Tap the status on a card to change it right away.',
+          'Tap the card to open the task: details, update history and “Add update”.',
+        ],
+        tips: ['“Done” and “Cancelled” set the closing date automatically.'],
+      },
+      {
+        id: 'archive',
+        title: 'Archive and past minutes',
+        steps: [
+          'Archive tab → “Meetings”: every approved minutes document for each series. Open any one and export it again.',
+          '“Closed tasks”: tasks that are done or cancelled, with their closing date.',
+          'Need to change approved minutes? Open them → “Back to draft for editing”, edit, and approve again.',
+          'Series finished? From its settings → “Archive series”. It is hidden from Home and all its data is kept.',
+        ],
+        tips: ['Approved minutes are saved exactly as approved, so exporting them again gives the same document even if task statuses changed later.'],
+      },
+      {
+        id: 'people',
+        title: 'People directory',
+        steps: [
+          'Settings → People directory → “Add person”: name, title (أ/ ، م/ ، د/) and department.',
+          '“Paste list”: paste names one per line; a leading title is detected automatically.',
+          'Tap anyone to edit or deactivate them.',
+        ],
+        tips: ['If the person is used in a series, task or minutes, deleting only deactivates them so old minutes stay intact.'],
+      },
+      {
+        id: 'export',
+        title: 'Export and share',
+        steps: [
+          'Minutes: from the last meeting step, or Archive → the meeting → Word, PDF or Print.',
+          'Follow-up file: series page → “Follow-up PDF” or “Follow-up Excel”.',
+          'After exporting, the share sheet opens (WhatsApp, email, Files). If sharing is not available, the file downloads.',
+        ],
+        tips: ['The follow-up Excel file can be imported back into the app.'],
+      },
+      {
+        id: 'import',
+        title: 'Import tasks from Excel',
+        steps: [
+          'Send the Excel file to your phone and save it in Files. It must be a .xlsx file.',
+          'Create the series first with the same numbering prefix as the file: if tasks are Y-01, Y-02, the prefix is Y.',
+          'Settings → “Import tasks from Excel” → “Choose Excel file”.',
+          'Check the preview: the number of tasks and the list. Choose the series, and keep “Add new owners to the directory” on.',
+          'Tap “Import”, then Follow-up → “All” and check the numbers, statuses and dates.',
+          'Open any task: the “Latest update” and “Required for next meeting” are in its update history.',
+        ],
+        tips: [
+          'Columns are found by name: No., Topic, Task, Owner, Date added, Target date, Status, Latest update, Required for next meeting (Arabic or English). The “Closed” sheet is read too.',
+          'The file is read on the phone only. Importing it twice skips tasks whose number already exists.',
+        ],
+      },
+      {
+        id: 'backup',
+        title: 'Backup and restore',
+        steps: [
+          'Settings → “Back up now” → send the file to yourself or save it to Drive.',
+          'To restore: Settings → “Restore from file” → choose the file → confirm.',
+          'Before any restore, the app saves a safety copy of the current data. Go back to it from “Automatic safety copies”.',
+          'Move a series to another phone: series page → “Export series settings”; on the other phone: Settings → “Import a series from file”.',
+        ],
+        tips: ['If the last backup is more than 7 days old, a reminder shows on Home.'],
+      },
+      {
+        id: 'pin',
+        title: 'PIN lock',
+        steps: [
+          'Settings → “Turn on lock”: 4 to 8 digits.',
+          'The app asks for it only when it opens, and unlocks as soon as you enter the last correct digit.',
+          'While the app stays open it does not ask again, even if you pull down to refresh or switch apps and come back.',
+        ],
+        tips: ['If you forget the PIN: “Forgot PIN?” on the lock screen wipes the data; then restore your latest backup.'],
+      },
+      {
+        id: 'language',
+        title: 'Language',
+        steps: [
+          'Settings → “Language / اللغة” → العربية or English.',
+          'The app, the minutes and exported files use the language you choose.',
+        ],
+        tips: ['The language is saved in the backup.'],
+      },
+      {
+        id: 'update',
+        title: 'Updates and offline use',
+        steps: [
+          'The app works without internet after the first launch.',
+          'When a new version is out, a “A new version of the app is available” bar shows → “Update now”. Your data stays as it is.',
+          'If the bar does not show: close the app completely and open it again while online.',
+          'To see which version you have: Settings → “About” → Version.',
+        ],
+        tips: ['Settings → “Data protection” shows whether storage is persistent and how much space is used.'],
+      },
+    ],
+    tipsLabel: 'Note',
+  },
+
   files: {
     minutes: 'Minutes',
     backup: 'Backup_MeetingMinutes',

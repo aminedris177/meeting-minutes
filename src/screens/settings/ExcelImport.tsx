@@ -70,6 +70,9 @@ export function ExcelImport({ onClose }: { onClose: () => void }) {
       }
     >
       <p class="muted small">{m.hint}</p>
+      <a class="help-link" href="#/help/import" onClick={onClose}>
+        {t().help.howToImport}
+      </a>
       {seriesList && seriesList.length === 0 ? (
         <p class="warn">{m.noSeries}</p>
       ) : (

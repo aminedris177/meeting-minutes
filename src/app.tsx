@@ -10,6 +10,7 @@ import { UpdatePrompt } from './components/UpdatePrompt';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
 import { isStandalone } from './lib/platform';
 import { segments, useHashPath } from './lib/router';
+import { HelpScreen } from './screens/Help';
 import { HomeScreen } from './screens/Home';
 import { PeopleScreen } from './screens/people/People';
 import { FollowupScreen } from './screens/Followup';
@@ -121,6 +122,9 @@ export function App() {
       break;
     case 'meeting':
       screen = <MeetingScreen key={segs[1]} id={segs[1] ?? ''} />;
+      break;
+    case 'help':
+      screen = <HelpScreen section={segs[1]} />;
       break;
     default:
       screen = <HomeScreen />;

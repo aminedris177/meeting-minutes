@@ -85,3 +85,6 @@ export const PeopleIcon = (p: P) =>
   base([<circle cx="9" cy="8" r="3.2" />, <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />, <path d="M16 4.5a3 3 0 010 6M18 14c2 .8 3 2.8 3 6" />], p);
 
 export const CheckIcon = (p: P) => base([<path d="M5 12.5l4.5 4.5L19 7" />], p);
+
+export const HelpIcon = (p: P) =>
+  base([<circle cx="12" cy="12" r="9" />, <path d="M9.6 9.3a2.5 2.5 0 014.8.9c0 1.7-2.4 2.2-2.4 3.8" />, <circle cx="12" cy="17.2" r="0.6" fill="currentColor" />], p);
