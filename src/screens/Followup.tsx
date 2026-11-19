@@ -5,6 +5,7 @@ import { PlusIcon } from '../components/icons';
 import { StatusPicker } from '../components/task/Status';
 import { TaskCard } from '../components/task/TaskCard';
 import { TaskForm } from '../components/task/TaskForm';
+import { FollowupPdfButton } from '../components/FollowupPdfButton';
 import { useLive } from '../db/live';
 import { displayName, listPeople } from '../db/repos/people';
 import {
@@ -139,6 +140,7 @@ export function FollowupScreen() {
                 value={filter.query ?? ''}
                 onInput={(e) => setFilter({ query: e.currentTarget.value })}
               />
+              {filter.seriesId !== 'all' && <FollowupPdfButton seriesId={filter.seriesId} />}
             </>
           )}
 

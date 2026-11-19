@@ -1,6 +1,112 @@
-// مؤقت — بيتكتب في المرحلة 6.
+// PDF: المستند بيترسم HTML في مكان مخفي، بيتقسم لصفحات A4 (من غير قطع صفوف)،
+// كل صفحة بتتصور بـ html2canvas كـ JPEG مضغوط، وبتتجمع بـ jsPDF.
+import { h, render, type VNode } from 'preact';
+import { FollowupReport, type FollowupData } from '../components/FollowupReport';
+import { MinutesView } from '../components/MinutesView';
+import { latestTextUpdate, listTaskUpdates, queryTasks } from '../db/repos/tasks';
+import { db } from '../db/schema';
 import type { MinutesModel } from '../db/types';
+import { fmt, t } from '../i18n';
+import { todayISO } from '../lib/dates';
+import { waitForAssets } from '../lib/print';
+import { A4_LANDSCAPE, A4_PORTRAIT, paginate, type PageSize } from './paginate';
+import { minutesFileName, safeFileName, shareOrDownload } from './share';
 
-export async function exportMinutesPdf(_model: MinutesModel, _logoUrl?: string): Promise<void> {
-  throw new Error('PDF export: phase 6');
+/** دقة التصوير: 1.7 = نص واضح على الموبايل، والـ JPEG بجودة 0.72 = حجم صغير للواتساب */
+const CAPTURE_SCALE = 1.7;
+const JPEG_QUALITY = 0.72;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function renderPdf(vnode: VNode<any>, size: PageSize, footer: (p: number, n: number) => string): Promise<Blob> {
+  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
+
+  // مسرح مخفي برّه الشاشة (مش opacity 0 — علشان html2canvas يرسمه)
+  const stage = document.createElement('div');
+  Object.assign(stage.style, { position: 'fixed', top: '0', left: '-30000px', zIndex: '-1', pointerEvents: 'none' });
+  document.body.appendChild(stage);
+  const src = document.createElement('div');
+  stage.appendChild(src);
+  try {
+    render(vnode, src);
+    const sourceEl = src.firstElementChild as HTMLElement;
+    await waitForAssets(sourceEl);
+
+    const pagesHost = document.createElement('div');
+    stage.appendChild(pagesHost);
+    const pages = paginate(sourceEl, pagesHost, {
+      size,
+      pageClass: sourceEl.className,
+      continued: t().report.continued,
+      footer,
+    });
+    src.style.display = 'none';
+
+    const landscape = size.width > size.height;
+    const pdf = new jsPDF({ orientation: landscape ? 'landscape' : 'portrait', unit: 'mm', format: 'a4', compress: true });
+    const [wMm, hMm] = landscape ? [297, 210] : [210, 297];
+    for (const [i, page] of pages.entries()) {
+      const canvas = await html2canvas(page, {
+        scale: CAPTURE_SCALE,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        logging: false,
+        width: size.width,
+        height: size.height,
+        windowWidth: size.width,
+      });
+      if (i > 0) pdf.addPage('a4', landscape ? 'landscape' : 'portrait');
+      pdf.addImage(canvas.toDataURL('image/jpeg', JPEG_QUALITY), 'JPEG', 0, 0, wMm, hMm, undefined, 'FAST');
+    }
+    return pdf.output('blob');
+  } finally {
+    render(null, src);
+    stage.remove();
+  }
+}
+
+export async function minutesPdfBlob(model: MinutesModel, logoUrl?: string): Promise<Blob> {
+  const m = t().minutes;
+  return renderPdf(h(MinutesView, { model, logoUrl }), A4_PORTRAIT, (p, n) =>
+    `${model.seriesName} — ${m.title} ${model.number}   ·   ${fmt(m.page, { n: p, total: n })}`,
+  );
+}
+
+export async function exportMinutesPdf(model: MinutesModel, logoUrl?: string): Promise<void> {
+  const blob = await minutesPdfBlob(model, logoUrl);
+  await shareOrDownload(blob, minutesFileName(model.seriesName, model.date, 'pdf'), `${model.seriesName} — ${model.number}`);
+}
+
+// ===== ملف المتابعة لكل سلسلة =====
+
+export async function buildFollowupData(seriesId: string): Promise<FollowupData> {
+  const today = todayISO();
+  const [series, org] = await Promise.all([db.series.get(seriesId), db.org.get('org')]);
+  if (!series) throw new Error('Series not found');
+  const rows = await queryTasks({ seriesId, ownerId: 'all', status: 'all' }, today);
+  const withUpdates = await Promise.all(
+    rows.map(async (r) => ({ task: r.task, owner: r.owner, delay: r.delay, latest: latestTextUpdate(await listTaskUpdates(r.task.id)) })),
+  );
+  const open = rows.filter((r) => r.task.status !== 'done' && r.task.status !== 'cancelled').length;
+  return {
+    orgName: org?.name ?? '',
+    series,
+    today,
+    rows: withUpdates,
+    counts: { open, overdue: rows.filter((r) => r.delay > 0).length, done: rows.filter((r) => r.task.status === 'done').length, total: rows.length },
+  };
+}
+
+export async function exportFollowupPdf(seriesId: string): Promise<void> {
+  const data = await buildFollowupData(seriesId);
+  const logo = (await db.org.get('org'))?.logo;
+  const logoUrl = logo ? URL.createObjectURL(logo) : undefined;
+  try {
+    const f = t().report;
+    const blob = await renderPdf(h(FollowupReport, { data, logoUrl }), A4_LANDSCAPE, (p, n) =>
+      `${data.series.name} — ${f.title}   ·   ${fmt(t().minutes.page, { n: p, total: n })}`,
+    );
+    await shareOrDownload(blob, `${safeFileName(`متابعة_${data.series.name}_${data.today}`)}.pdf`, f.title);
+  } finally {
+    if (logoUrl) URL.revokeObjectURL(logoUrl);
+  }
 }

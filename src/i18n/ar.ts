@@ -251,6 +251,21 @@ export const ar = {
     members: 'الحضور',
     others: 'باقي الدليل',
   },
+  report: {
+    title: 'ملف متابعة المهام',
+    date: 'بتاريخ',
+    open: 'مفتوحة',
+    overdue: 'متأخرة',
+    done: 'تمت',
+    tasks: 'المهام',
+    created: 'الإدراج',
+    delay: 'أيام التأخير',
+    latest: 'آخر تحديث',
+    continued: '(تابع)',
+    empty: 'مفيش مهام.',
+    export: 'ملف المتابعة PDF',
+  },
+
   archive: {
     title: 'الأرشيف',
     empty: 'لا توجد اجتماعات نهائية بعد.',

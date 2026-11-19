@@ -1,5 +1,6 @@
 // صفحة السلسلة: الاجتماع القادم، بدء/استكمال اجتماع، قائمة الاجتماعات، والمهام.
 import { useState } from 'preact/hooks';
+import { FollowupPdfButton } from '../../components/FollowupPdfButton';
 import { EmptyState, Screen } from '../../components/Screen';
 import { ChevronIcon, PlusIcon, SettingsIcon } from '../../components/icons';
 import { useLive } from '../../db/live';
@@ -101,6 +102,7 @@ function SeriesBody({ id }: { id: string }) {
           <ChevronIcon />
         </button>
       )}
+      <FollowupPdfButton seriesId={id} />
 
       <h2 class="section-title">{sp.meetings}</h2>
       {meetings && meetings.length === 0 && <EmptyState text={ms.none} />}

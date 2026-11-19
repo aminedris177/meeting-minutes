@@ -107,8 +107,10 @@
   width: 58px;
   text-align: center;
   font-weight: 700;
-  color: var(--mp);
   white-space: nowrap;
+}
+.mv-table td.code {
+  color: var(--mp);
 }
 .mv-table .wide {
   width: 40%;
@@ -172,8 +174,9 @@
   margin: 0;
   white-space: pre-wrap;
 }
+/* خط على الطرف (border مش box-shadow — html2canvas بيرسم الـ inset shadow غلط) */
 .mv-new td:first-child {
-  box-shadow: inset -3px 0 0 var(--ms);
+  border-right: 3px solid var(--ms);
 }
 .mv-sign td {
   height: 34px;
@@ -229,4 +232,34 @@
   .mv-table thead {
     display: table-header-group;
   }
+}
+
+/* ===== تقرير المتابعة (بالعرض) ===== */
+.report .mv-info td {
+  width: 25%;
+}
+.report .mv-table {
+  font-size: 11.5px;
+}
+.report .mv-table .wide {
+  width: 26%;
+}
+.report .mv-table .wide2 {
+  width: 24%;
+}
+.report td.late,
+.report b.late {
+  color: #c62828;
+  font-weight: 700;
+}
+.report tr.row-late td:first-child {
+  border-right: 3px solid #c62828;
+}
+
+/* صفحات الـ PDF */
+.pdf-page .pdf-content > * {
+  margin-top: 0;
+}
+.pdf-page .mv-section {
+  margin-top: 14px;
 }
