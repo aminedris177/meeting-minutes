@@ -6,7 +6,9 @@ import { db } from '../../db/schema';
 import { fmt, t } from '../../i18n';
 import { formatDate } from '../../lib/dates';
 import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../../lib/platform';
+import { BackupCard } from './BackupCard';
 import { OrgCard } from './OrgCard';
+import { PinCard } from './PinCard';
 
 interface Props {
   offlineReady: boolean;
@@ -40,6 +42,9 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
         </span>
         <ChevronIcon />
       </a>
+
+      <BackupCard />
+      <PinCard />
 
       <section class="card">
         <h2>{m.storage}</h2>

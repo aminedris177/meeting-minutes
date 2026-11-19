@@ -10,6 +10,7 @@ import { db } from '../../db/schema';
 import { fmt, t } from '../../i18n';
 import { formatDate, todayISO } from '../../lib/dates';
 import { navigate } from '../../lib/router';
+import { runSeriesExport } from '../../lib/backupActions';
 
 export function SeriesPage({ id }: { id: string }) {
   const series = useLive(async () => (await db.series.get(id)) ?? null, [id]);
@@ -102,7 +103,12 @@ function SeriesBody({ id }: { id: string }) {
           <ChevronIcon />
         </button>
       )}
-      <FollowupPdfButton seriesId={id} />
+      <div class="btn-row tight">
+        <FollowupPdfButton seriesId={id} class="btn ghost grow" />
+        <button class="btn ghost grow" onClick={() => void runSeriesExport(id).catch((e) => alert(String(e)))}>
+          {t().backup.exportSeries}
+        </button>
+      </div>
 
       <h2 class="section-title">{sp.meetings}</h2>
       {meetings && meetings.length === 0 && <EmptyState text={ms.none} />}
