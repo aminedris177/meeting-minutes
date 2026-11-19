@@ -1097,3 +1097,19 @@ a.chip {
   color: var(--secondary);
   text-decoration: underline;
 }
+.help-shot {
+  margin: 10px auto 4px;
+  width: min(240px, 72%);
+  padding: 5px;
+  border-radius: 22px;
+  background: #0d1117;
+  box-shadow: 0 8px 22px rgba(20, 35, 60, 0.18);
+}
+.help-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 390 / 760;
+  border-radius: 17px;
+  background: #e9eef3;
+}

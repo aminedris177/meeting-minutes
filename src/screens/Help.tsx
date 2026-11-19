@@ -1,7 +1,8 @@
 // دليل الاستخدام جوه التطبيق — بلغة التطبيق الحالية. #/help/<id> بيفتح موضوع معيّن.
 import { useEffect, useState } from 'preact/hooks';
 import { Screen } from '../components/Screen';
-import { t } from '../i18n';
+import { getLang, t } from '../i18n';
+import { HELP_SHOTS, helpShotUrl } from './helpShots';
 
 export function HelpScreen({ section }: { section?: string }) {
   const m = t().help;
@@ -40,8 +41,15 @@ export function HelpScreen({ section }: { section?: string }) {
             <span>{s.title}</span>
           </summary>
           <ol class="help-steps">
-            {s.steps.map((step) => (
-              <li>{step}</li>
+            {s.steps.map((step, i) => (
+              <li key={i}>
+                {step}
+                {open === s.id && HELP_SHOTS[s.id]?.includes(i) && (
+                  <figure class="help-shot">
+                    <img src={helpShotUrl(getLang(), s.id, i)} alt="" loading="lazy" decoding="async" />
+                  </figure>
+                )}
+              </li>
             ))}
           </ol>
           {s.tips.map((tip) => (

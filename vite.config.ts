@@ -43,7 +43,7 @@ export default defineConfig({
       },
       workbox: {
         // precache كامل: كل الكود والخطوط والأيقونات → أوفلاين 100%
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,jpg}'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
