@@ -88,3 +88,6 @@ export const CheckIcon = (p: P) => base([<path d="M5 12.5l4.5 4.5L19 7" />], p);
 
 export const HelpIcon = (p: P) =>
   base([<circle cx="12" cy="12" r="9" />, <path d="M9.6 9.3a2.5 2.5 0 014.8.9c0 1.7-2.4 2.2-2.4 3.8" />, <circle cx="12" cy="17.2" r="0.6" fill="currentColor" />], p);
+
+export const CalendarIcon = (p: P) =>
+  base([<rect x="3" y="5" width="18" height="16" rx="2" />, <path d="M3 10h18M8 3v4M16 3v4" />, <path d="M12 13v5M9.5 15.5h5" />], p);

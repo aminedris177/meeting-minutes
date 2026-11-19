@@ -2,7 +2,7 @@
 import { useState } from 'preact/hooks';
 import { FollowupExportButtons } from '../../components/FollowupExportButtons';
 import { EmptyState, Screen } from '../../components/Screen';
-import { ChevronIcon, PlusIcon, SettingsIcon } from '../../components/icons';
+import { CalendarIcon, ChevronIcon, PlusIcon, SettingsIcon } from '../../components/icons';
 import { useLive } from '../../db/live';
 import { createMeeting, getDraft, listMeetings, seriesNextDate } from '../../db/repos/meetings';
 import { listSeriesSummaries } from '../../db/repos/series';
@@ -11,6 +11,7 @@ import { fmt, t } from '../../i18n';
 import { formatDate, todayISO } from '../../lib/dates';
 import { navigate } from '../../lib/router';
 import { runSeriesExport } from '../../lib/backupActions';
+import { CalendarSheet } from './CalendarSheet';
 
 export function SeriesPage({ id }: { id: string }) {
   const series = useLive(async () => (await db.series.get(id)) ?? null, [id]);
@@ -35,6 +36,7 @@ function SeriesBody({ id }: { id: string }) {
   const next = useLive(async () => (series ? seriesNextDate(series) : undefined), [series?.updatedAt, meetings?.length]);
   const summary = useLive(async () => (await listSeriesSummaries(today)).find((x) => x.series.id === id), [id, today]);
   const [busy, setBusy] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
   if (!series) return <main class="screen" />;
 
   const start = async () => {
@@ -105,10 +107,16 @@ function SeriesBody({ id }: { id: string }) {
       )}
       <FollowupExportButtons seriesId={id} />
       <div class="btn-row tight">
+        {!series.archived && (
+          <button class="btn ghost grow" onClick={() => setCalOpen(true)}>
+            <CalendarIcon width={18} height={18} /> {t().addToCal.button}
+          </button>
+        )}
         <button class="btn ghost grow" onClick={() => void runSeriesExport(id).catch((e) => alert(String(e)))}>
           {t().backup.exportSeries}
         </button>
       </div>
+      {calOpen && <CalendarSheet series={series} onClose={() => setCalOpen(false)} />}
 
       <h2 class="section-title">{sp.meetings}</h2>
       {meetings && meetings.length === 0 && <EmptyState text={ms.none} />}

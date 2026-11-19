@@ -1,5 +1,6 @@
 import { useState } from 'preact/hooks';
 import { EmptyState, Screen } from '../components/Screen';
+import { AlertsBanner } from '../components/AlertsBanner';
 import { BackupReminder } from '../components/BackupReminder';
 import { HelpIcon, PlusIcon } from '../components/icons';
 import { useLive } from '../db/live';
@@ -27,6 +28,7 @@ export function HomeScreen() {
         </a>
       }
     >
+      <AlertsBanner />
       <BackupReminder />
       {org && !org.name && (
         <section class="card notice">

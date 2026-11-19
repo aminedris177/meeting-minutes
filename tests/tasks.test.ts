@@ -196,3 +196,26 @@ describe('follow-up query', () => {
     expect(counts).toMatchObject({ all: 5, open: 4, overdue: 2, done: 1, not_started: 4 });
   });
 });
+
+describe('home alerts', () => {
+  it('counts overdue and due-soon tasks and finds meetings today/tomorrow', async () => {
+    const { computeAlerts } = await import('../src/lib/alerts');
+    const d = freshDb();
+    const s = await createSeries({ ...emptySeriesDraft(), name: 'غدًا', taskPrefix: 'A', firstMeetingDate: '2026-11-19' }, d);
+    const arch = await createSeries({ ...emptySeriesDraft(), name: 'مؤرشفة', taskPrefix: 'Z', firstMeetingDate: '2026-11-18' }, d);
+    await d.series.update(arch.id, { archived: true });
+    const base = { seriesId: s.id, topic: '', ownerId: null, createdDate: '2026-11-01', priority: 'medium' as const };
+    await createTask({ ...base, description: 'متأخرة', targetDate: '2026-11-10' }, d);
+    await createTask({ ...base, description: 'النهارده', targetDate: '2026-11-18' }, d);
+    await createTask({ ...base, description: 'بعد 3', targetDate: '2026-11-21' }, d);
+    await createTask({ ...base, description: 'بعد 4', targetDate: '2026-11-22' }, d);
+    const done = await createTask({ ...base, description: 'خلصت', targetDate: '2026-11-01' }, d);
+    await setTaskStatus(done.id, 'done', '2026-11-02', {}, d);
+    await createTask({ ...base, seriesId: arch.id, description: 'سلسلة مؤرشفة', targetDate: '2026-11-01' }, d);
+
+    const a = await computeAlerts('2026-11-18', d);
+    expect(a.overdue).toBe(1);
+    expect(a.soon).toBe(2);
+    expect(a.meetings.map((m) => [m.series.name, m.when])).toEqual([['غدًا', 'tomorrow']]);
+  });
+});

@@ -1,5 +1,6 @@
 // تبويب الاجتماعات: لكل سلسلة نشطة — بدء/استكمال اجتماع، والاجتماع القادم، وآخر اجتماع.
 import { useState } from 'preact/hooks';
+import { MonthCalendar } from '../components/MonthCalendar';
 import { EmptyState, Screen } from '../components/Screen';
 import { PlusIcon } from '../components/icons';
 import { useLive } from '../db/live';
@@ -49,6 +50,7 @@ export function MeetingsScreen() {
 
   return (
     <Screen title={m.title}>
+      {rows && rows.length > 0 && <MonthCalendar />}
       {rows && rows.length === 0 && (
         <EmptyState text={m.empty} hint={m.noSeries}>
           <a class="btn primary" href="#/series/new">

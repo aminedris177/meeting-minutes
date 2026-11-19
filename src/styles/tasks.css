@@ -626,3 +626,180 @@ button.nav-card {
   border: 0;
   border-top: 1px solid var(--border);
 }
+
+/* ===== التقويم الشهري ===== */
+.cal {
+  padding: 12px;
+}
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cal-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  margin-top: 4px;
+}
+.cal-wd {
+  padding: 4px 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.cal-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 48px;
+  padding: 4px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.cal-day.out {
+  color: #b3bcc6;
+}
+.cal-day.today .cal-num {
+  background: var(--primary);
+  color: #fff;
+}
+.cal-day.sel {
+  border-color: var(--secondary);
+  background: var(--light);
+}
+.cal-num {
+  min-width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.cal-marks {
+  display: flex;
+  gap: 2px;
+  min-height: 8px;
+  align-items: center;
+}
+.mk {
+  --c: var(--primary);
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  flex: none;
+}
+.mk.dot {
+  border-radius: 50%;
+  background: var(--c);
+}
+.mk.hollow {
+  border-radius: 50%;
+  border: 1.5px solid var(--c);
+}
+.mk.sq {
+  border-radius: 2px;
+  background: var(--secondary);
+}
+.mk.sq.late {
+  background: var(--danger);
+}
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.cal-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.cal-day-list {
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.cal-day-list h3 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  color: var(--primary);
+}
+.cal-ev {
+  padding-inline: 4px;
+  min-height: 52px;
+}
+.cal-ev .mk {
+  width: 10px;
+  height: 10px;
+}
+
+/* ===== تنبيهات الرئيسية ===== */
+.alerts h2 {
+  margin-bottom: 4px;
+}
+.alert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.alert-row {
+  --c: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--light);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+.alert-row.late {
+  --c: var(--danger);
+  background: #fde8e8;
+  color: var(--danger);
+}
+.alert-row.soon {
+  --c: var(--warn);
+  background: var(--cream);
+}
+.alert-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--c);
+}
+.cal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 10px;
+}
+.cal-actions p {
+  margin: 0;
+}

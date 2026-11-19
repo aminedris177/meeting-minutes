@@ -62,6 +62,8 @@ export interface Series {
   taskCounter: number;
   /** آخر رقم اجتماع اتصرف */
   meetingCounter: number;
+  /** إعدادات «إضافة للتقويم» (الساعة والمدة والتذكير) — بتتفتكر للمرة الجاية */
+  calendar?: { time: string; durationMin: number; reminder: 'none' | '15m' | '1h' | '1d' | '1d1h' };
   archived: boolean;
   createdAt: number;
   updatedAt: number;

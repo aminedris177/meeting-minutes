@@ -10,6 +10,7 @@ import { BackupCard } from './BackupCard';
 import { LanguageCard } from './LanguageCard';
 import { OrgCard } from './OrgCard';
 import { PinCard } from './PinCard';
+import { BadgeCard } from './BadgeCard';
 
 interface Props {
   offlineReady: boolean;
@@ -55,6 +56,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
 
       <BackupCard />
       <PinCard />
+      <BadgeCard />
 
       <section class="card">
         <h2>{m.storage}</h2>

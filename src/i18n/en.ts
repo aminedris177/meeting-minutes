@@ -543,6 +543,53 @@ export const en: Messages = {
 
   titles: { 'أ/': 'Mr./Ms.', 'م/': 'Eng.', 'د/': 'Dr.' },
 
+  calendar: {
+    title: 'Calendar',
+    today: 'Today',
+    prev: 'Previous month',
+    next: 'Next month',
+    planned: 'Planned',
+    due: 'Due',
+    empty: 'No meetings or due dates on this day.',
+    legendHeld: 'Meeting',
+    legendPlanned: 'Upcoming meeting',
+    legendDue: 'Task due',
+    legendLate: 'Overdue',
+  },
+
+  alerts: {
+    title: 'Alerts',
+    overdue: '{n} overdue tasks',
+    soon: '{n} tasks due within 3 days',
+    meetingToday: '“{name}” meeting is today',
+    meetingTomorrow: '“{name}” meeting is tomorrow',
+    badge: 'Overdue count on the app icon',
+    badgeHint: 'Updated every time you open the app. On iPhone it needs notification permission.',
+    badgeEnable: 'Allow',
+    badgeOn: 'On',
+    badgeBlocked: 'Permission is blocked in the phone settings.',
+    badgeUnsupported: 'This phone does not support a number on the app icon.',
+  },
+
+  addToCal: {
+    button: 'Add to calendar',
+    title: 'Add to calendar',
+    hint: 'The file opens in the phone calendar (iPhone, Google, Outlook), and the calendar reminds you on time even when the app is closed.',
+    time: 'Meeting time',
+    duration: 'Duration (minutes)',
+    reminder: 'Reminder',
+    reminders: { none: 'None', '15m': '15 minutes before', '1h': '1 hour before', '1d': '1 day before', '1d1h': '1 day and 1 hour before' },
+    meetings: 'Series meetings (recurring event)',
+    tasks: 'Open task due dates ({n})',
+    share: 'Share the file instead (email / Outlook)',
+    noTasks: 'No open tasks with a due date.',
+    noNext: 'Set the next meeting date first, in the series settings or the last meeting.',
+    outlookHint: 'Outlook: when the calendar asks where to add it, choose your work account. Or email the file to yourself and open it in Outlook.',
+    updateHint: 'If the date changes, add it again. Outlook updates the event; some calendars may duplicate it, so delete the old one.',
+    filePrefix: 'Calendar',
+    tasksFile: 'DueDates',
+  },
+
   help: {
     title: 'User guide',
     open: 'User guide',
@@ -596,6 +643,17 @@ export const en: Messages = {
           'Tap the card to open the task: details, update history and “Add update”.',
         ],
         tips: ['“Done” and “Cancelled” set the closing date automatically.'],
+      },
+      {
+        id: 'calendar',
+        title: 'Calendar and reminders',
+        steps: [
+          'Meetings tab: the month calendar. A filled dot is a meeting, a hollow dot is an upcoming meeting calculated from the recurrence, and a square is a task due date (red if overdue). Tap any day to see its details.',
+          'Series page → “Add to calendar”: choose the meeting time, duration and reminder, then tap “Series meetings”. They are added to the phone calendar as a recurring event.',
+          'From the same screen: “Open task due dates” adds each task due date with a 9 AM reminder.',
+          'Home shows overdue tasks, tasks due soon, and a meeting today or tomorrow. You can turn on the overdue count on the app icon in Settings.',
+        ],
+        tips: ['The real reminder comes from the phone calendar, so it works even when the app is closed and offline. If a date changes, add it to the calendar again.'],
       },
       {
         id: 'archive',

@@ -6,6 +6,7 @@ import { LockScreen } from './components/LockScreen';
 import { useLive } from './db/live';
 import { getPin, isSessionUnlocked, setSessionUnlocked } from './lib/pin';
 import { useLang } from './lib/lang';
+import { useBadgeSync } from './lib/alerts';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
 import { isStandalone } from './lib/platform';
@@ -27,6 +28,8 @@ const UPDATE_CHECK_MS = 60 * 60 * 1000; // فحص التحديثات كل ساع
 export function App() {
   // تغيير اللغة بيعيد رسم كل الشاشات (key على العنصر الرئيسي)
   const lang = useLang();
+  // رقم المتأخر على أيقونة التطبيق
+  useBadgeSync();
   const path = useHashPath();
   const segs = segments(path);
   const seg = segs[0] ?? '';
