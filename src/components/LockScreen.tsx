@@ -2,7 +2,7 @@
 import { useState } from 'preact/hooks';
 import { wipeAllData } from '../db/backup';
 import { fmt, t } from '../i18n';
-import { PIN_MAX, PIN_MIN, setPin, verifyPin, type StoredPin } from '../lib/pin';
+import { PIN_MAX, PIN_MIN, setPin, setSessionUnlocked, verifyPin, type StoredPin } from '../lib/pin';
 
 const MAX_TRIES = 5;
 const LOCKOUT_S = 30;
@@ -37,10 +37,17 @@ export function LockScreen({ stored, onUnlock }: { stored: StoredPin; onUnlock: 
   };
 
   const press = (d: string) => {
-    if (blocked) return;
+    if (blocked || checking) return;
     setError('');
     const v = (value + d).slice(0, PIN_MAX);
     setValue(v);
+    // فتح تلقائي أول ما آخر رقم يتكتب
+    if (stored.length) {
+      if (v.length === stored.length) void check(v);
+    } else if (v.length >= PIN_MIN) {
+      // PIN قديم من غير طول متخزن: نجرّب بهدوء من غير ما نعدّ محاولة غلط
+      void verifyPin(v, stored).then((ok) => ok && onUnlock());
+    }
   };
 
   if (forgot) return <ForgotPin onBack={() => setForgot(false)} />;
@@ -52,7 +59,7 @@ export function LockScreen({ stored, onUnlock }: { stored: StoredPin; onUnlock: 
         <h1>{m.lockTitle}</h1>
         <p class="muted">{m.lockPrompt}</p>
         <div class="pin-dots" dir="ltr" aria-live="polite">
-          {Array.from({ length: Math.max(PIN_MIN, value.length) }, (_, i) => (
+          {Array.from({ length: stored.length ?? Math.max(PIN_MIN, value.length) }, (_, i) => (
             <span class={i < value.length ? 'on' : ''} />
           ))}
         </div>
@@ -93,6 +100,7 @@ function ForgotPin({ onBack }: { onBack: () => void }) {
     try {
       await wipeAllData(__APP_VERSION__);
       await setPin(null);
+      setSessionUnlocked(false);
       alert(m.wiped);
       location.hash = '/settings';
       location.reload();

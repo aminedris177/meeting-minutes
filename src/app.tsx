@@ -4,7 +4,7 @@ import { BottomNav } from './components/BottomNav';
 import { InstallHint } from './components/InstallHint';
 import { LockScreen } from './components/LockScreen';
 import { useLive } from './db/live';
-import { getPin } from './lib/pin';
+import { getPin, isSessionUnlocked, setSessionUnlocked } from './lib/pin';
 import { useLang } from './lib/lang';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
@@ -22,7 +22,6 @@ import { SeriesWizard } from './screens/series/SeriesWizard';
 import { SettingsScreen } from './screens/settings/Settings';
 
 const UPDATE_CHECK_MS = 60 * 60 * 1000; // فحص التحديثات كل ساعة وعند الرجوع للتطبيق
-const RELOCK_MS = 60 * 1000; // القفل يرجع بعد دقيقة في الخلفية
 
 export function App() {
   // تغيير اللغة بيعيد رسم كل الشاشات (key على العنصر الرئيسي)
@@ -63,22 +62,24 @@ export function App() {
   // تمرير لأعلى عند تغيير الشاشة
   useEffect(() => window.scrollTo(0, 0), [path]);
 
-  // قفل الـ PIN: عند الفتح، وبعد ما التطبيق يفضل في الخلفية أكتر من دقيقة
+  // قفل الـ PIN: بيتطلب لما التطبيق يتفتح من جديد بس. بعد الفتح بيفضل مفتوح طول ما التطبيق شغال
+  // (إعادة التحميل/سحب الشاشة/الخروج والرجوع مش بيقفلوه) — الحالة في sessionStorage.
   // null = مفيش PIN، undefined = لسه بيحمّل
   const pin = useLive(async () => (await getPin()) ?? null, []);
-  const [unlocked, setUnlocked] = useState(false);
-  useEffect(() => {
-    let hiddenAt = 0;
-    const onVis = () => {
-      if (document.visibilityState === 'hidden') hiddenAt = Date.now();
-      else if (hiddenAt && Date.now() - hiddenAt > RELOCK_MS) setUnlocked(false);
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
-  }, []);
+  const [unlocked, setUnlocked] = useState(isSessionUnlocked);
   // لسه بيقرا الإعداد: متعرضش البيانات لحظة قبل القفل
   if (pin === undefined) return <div class="app" />;
-  if (pin && !unlocked) return <LockScreen stored={pin} onUnlock={() => setUnlocked(true)} />;
+  if (pin && !unlocked) {
+    return (
+      <LockScreen
+        stored={pin}
+        onUnlock={() => {
+          setSessionUnlocked(true);
+          setUnlocked(true);
+        }}
+      />
+    );
+  }
 
   const dismissInstall = () => {
     setInstallHintDismissed(true);

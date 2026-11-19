@@ -7,6 +7,29 @@ export interface StoredPin {
   salt: string; // base64
   hash: string; // base64
   iterations: number;
+  /** عدد الأرقام — علشان الفتح يحصل تلقائي أول ما آخر رقم يتكتب. (مش موجود في الـ PINs القديمة) */
+  length?: number;
+}
+
+// ===== فتح القفل طول ما التطبيق مفتوح =====
+// sessionStorage بيفضل مع إعادة التحميل وسحب الشاشة، وبيتمسح لما التطبيق يتقفل خالص.
+const SESSION_KEY = 'pin-unlocked';
+
+export function isSessionUnlocked(): boolean {
+  try {
+    return sessionStorage.getItem(SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function setSessionUnlocked(v: boolean): void {
+  try {
+    if (v) sessionStorage.setItem(SESSION_KEY, '1');
+    else sessionStorage.removeItem(SESSION_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 export const PIN_MIN = 4;
@@ -28,7 +51,7 @@ async function derive(pin: string, salt: Uint8Array, iterations: number): Promis
 
 export async function hashPin(pin: string): Promise<StoredPin> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  return { salt: b64(salt), hash: await derive(pin, salt, ITERATIONS), iterations: ITERATIONS };
+  return { salt: b64(salt), hash: await derive(pin, salt, ITERATIONS), iterations: ITERATIONS, length: pin.length };
 }
 
 export async function verifyPin(pin: string, stored: StoredPin): Promise<boolean> {
@@ -48,4 +71,6 @@ export async function setPin(pin: string | null, d: AppDB = db): Promise<void> {
   if (pin === null) return setSetting(SETTING.pin, undefined, d);
   if (!isValidPin(pin)) throw new Error('Invalid PIN');
   await setSetting(SETTING.pin, await hashPin(pin), d);
+  // اللي لسه عامل الـ PIN جوه التطبيق — ميتسألش عليه تاني لحد ما التطبيق يتقفل
+  setSessionUnlocked(true);
 }

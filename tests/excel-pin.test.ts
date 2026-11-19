@@ -99,6 +99,9 @@ describe('PIN', () => {
     expect(JSON.stringify(stored)).not.toContain('2468');
     expect(await verifyPin('2468', stored)).toBe(true);
     expect(await verifyPin('2469', stored)).toBe(false);
+    // الطول بيتخزن علشان الفتح التلقائي بعد آخر رقم
+    expect(stored.length).toBe(4);
+    expect((await hashPin('123456')).length).toBe(6);
     const other = await hashPin('2468');
     expect(other.salt).not.toBe(stored.salt);
     expect(other.hash).not.toBe(stored.hash);
