@@ -155,6 +155,7 @@ export const ar = {
     status: 'الحالة',
     next: 'المطلوب',
     decisions: 'القرارات',
+    decision: 'القرار',
     task: 'المهمة',
     newTasks: 'المهام الجديدة',
     description: 'الوصف',
