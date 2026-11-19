@@ -11,15 +11,6 @@ export function MeetingsScreen() {
   );
 }
 
-export function FollowupScreen() {
-  const m = t().followup;
-  return (
-    <Screen title={m.title}>
-      <EmptyState text={m.empty} />
-    </Screen>
-  );
-}
-
 export function ArchiveScreen() {
   const m = t().archive;
   return (

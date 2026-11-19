@@ -128,6 +128,9 @@ export interface TaskUpdate {
   /** المطلوب للاجتماع القادم */
   nextAction: string;
   date: ISODate;
+  /** لو التحديث ده غيّر الحالة: الحالة الجديدة (والقديمة) — للسجل */
+  status?: TaskStatus;
+  prevStatus?: TaskStatus;
   createdAt: number;
 }
 

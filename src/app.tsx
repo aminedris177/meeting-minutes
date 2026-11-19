@@ -8,7 +8,9 @@ import { isStandalone } from './lib/platform';
 import { segments, useHashPath } from './lib/router';
 import { HomeScreen } from './screens/Home';
 import { PeopleScreen } from './screens/people/People';
-import { ArchiveScreen, FollowupScreen, MeetingsScreen } from './screens/placeholders';
+import { FollowupScreen } from './screens/Followup';
+import { ArchiveScreen, MeetingsScreen } from './screens/placeholders';
+import { TaskPage } from './screens/TaskPage';
 import { SeriesWizard } from './screens/series/SeriesWizard';
 import { SettingsScreen } from './screens/settings/Settings';
 
@@ -69,6 +71,9 @@ export function App() {
     case 'followup':
       screen = <FollowupScreen />;
       break;
+    case 'task':
+      screen = <TaskPage key={segs[1]} id={segs[1] ?? ''} />;
+      break;
     case 'archive':
       screen = <ArchiveScreen />;
       break;
@@ -100,7 +105,7 @@ export function App() {
           setOfflineToast(false);
         }}
       />
-      {!fullscreen && <BottomNav active={seg} />}
+      {!fullscreen && <BottomNav active={seg === 'task' ? 'followup' : seg} />}
     </div>
   );
 }
