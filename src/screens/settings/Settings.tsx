@@ -35,6 +35,8 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
 
   return (
     <Screen title={m.title}>
+      {/* اسم المطوّر — بالإنجليزي في اللغتين، أول الإعدادات */}
+      <p class="credit" dir="ltr">© 2026 Eng. Amin Edris</p>
       <a class="card nav-card" href="#/help">
         <HelpIcon />
         <span class="list-main">
@@ -87,8 +89,6 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
         </p>
         <p class="muted">{offlineReady || navigator.serviceWorker?.controller ? m.offlineReady : m.offlineNotReady}</p>
       </section>
-      {/* اسم المطوّر — بالإنجليزي في اللغتين */}
-      <p class="credit" dir="ltr">© 2026 Eng. Amin Edris</p>
     </Screen>
   );
 }
