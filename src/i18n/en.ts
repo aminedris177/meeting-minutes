@@ -93,6 +93,7 @@ export const en: Messages = {
     removeGuest: 'Remove',
     tapHint: 'Tap a name to toggle present/absent.',
     noAttendees: 'This series has no fixed attendees — add from the directory or add a guest.',
+    hintReview: 'What you write here appears in this meeting’s minutes and becomes the task’s “latest update” in the follow-up file.',
     reviewEmpty: 'No open tasks to review.',
     reviewCount: '{n} tasks to review',
     update: 'Update',
@@ -280,6 +281,10 @@ export const en: Messages = {
     statusChanged: 'Status: {from} → {to}',
     statusSet: 'Status: {to}',
     latest: 'Latest update',
+    latestBadge: 'Latest update · shown in the follow-up file',
+    showAllUpdates: 'Show all updates ({n})',
+    showFewerUpdates: 'Show only the latest {n}',
+    hintExport: 'The latest update is the one shown in the follow-up file (PDF and Excel). Older updates stay in the history here.',
     nextLabel: 'Required',
     delete: 'Delete task',
     confirmDelete: 'Permanently delete {code}? This number will not be reused. If the task was dropped, setting it to “Cancelled” is better.',
@@ -600,6 +605,7 @@ export const en: Messages = {
     storageNotPersisted: 'Storage is not guaranteed — the browser may clear data when space is low. Install the app on your home screen and keep a backup.',
     storageUnknown: 'This browser cannot report the storage status.',
     storageUsage: 'Space used',
+    dataCounts: 'Data: {tasks} tasks, {updates} updates, {meetings} meetings.',
     displayMode: 'Running as',
     installed: 'Installed on the home screen',
     inBrowser: 'Inside the browser (not installed)',
@@ -726,7 +732,10 @@ export const en: Messages = {
           '“Owners report”: a bar per owner with overdue, open and closed tasks, plus the on-time closing rate. Tap a name to see their tasks.',
           'A task you add often? In “New task” tap “Save as template”, and next time pick it under “From template”.',
         ],
-        tips: ['“Done” and “Cancelled” set the closing date automatically.'],
+        tips: [
+          '“Done” and “Cancelled” set the closing date automatically.',
+          'Every update is kept in the task history, but the follow-up file shows only the latest one (marked “Latest update” in the history). The history shows the latest 5; “Show all updates” shows the rest.',
+        ],
       },
       {
         id: 'calendar',
@@ -769,7 +778,10 @@ export const en: Messages = {
           'Follow-up file: series page → “Follow-up PDF” or “Follow-up Excel”.',
           'After exporting, the share sheet opens (WhatsApp, email, Files). If sharing is not available, the file downloads.',
         ],
-        tips: ['The follow-up Excel file can be imported back into the app.'],
+        tips: [
+          'The follow-up Excel file can be imported back into the app.',
+          'The follow-up file shows only the latest update of each task. The minutes show the update written in that meeting.',
+        ],
       },
       {
         id: 'import',
@@ -886,6 +898,7 @@ export const en: Messages = {
   },
 
   common: {
+    gotIt: 'Got it',
     close: 'Close',
     comingSoon: 'Coming soon',
     save: 'Save',

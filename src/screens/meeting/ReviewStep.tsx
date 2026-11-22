@@ -1,5 +1,6 @@
 // خطوة 3: مراجعة المهام المفتوحة — المتأخر الأول، ولكل مهمة: الحالة بلمسة + تحديث + المطلوب للاجتماع القادم.
 import { useRef } from 'preact/hooks';
+import { Hint } from '../../components/Hint';
 import { AutoField } from '../../components/AutoField';
 import { useLive } from '../../db/live';
 import { reviewItems, saveMeetingUpdate, type ReviewItem } from '../../db/repos/meetings';
@@ -22,6 +23,7 @@ export function ReviewStep({ meeting }: { meeting: Meeting }) {
   }
   return (
     <>
+      <Hint id="review-latest" text={m.hintReview} />
       <p class="muted small">{fmt(m.reviewCount, { n: items.length })}</p>
       {items.map((r) => (
         <ReviewCard key={r.task.id} item={r} meeting={meeting} />

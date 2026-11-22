@@ -1,5 +1,6 @@
 // صفحة المهمة: البيانات، الحالة بلمسة، وسجل التحديثات كله مع إضافة تحديث.
 import { useState } from 'preact/hooks';
+import { Hint } from '../components/Hint';
 import { DateField } from '../components/fields';
 import { Screen } from '../components/Screen';
 import { StatusBadge, StatusPicker } from '../components/task/Status';
@@ -7,13 +8,16 @@ import { TaskForm } from '../components/task/TaskForm';
 import { TrashIcon } from '../components/icons';
 import { useLive } from '../db/live';
 import { displayName, listPeople } from '../db/repos/people';
-import { addTaskUpdate, deleteTask, listTaskUpdates, setTaskStatus } from '../db/repos/tasks';
+import { addTaskUpdate, deleteTask, listTaskUpdates, setTaskStatus, latestTextUpdate } from '../db/repos/tasks';
 import { db } from '../db/schema';
 import type { Task, TaskUpdate } from '../db/types';
 import { delayDays, isOpen } from '../domain/delay';
 import { fmt, t } from '../i18n';
 import { diffDays, formatDate, todayISO } from '../lib/dates';
 import { navigate } from '../lib/router';
+
+/** عدد التحديثات اللي بتظهر في السجل قبل «عرض الكل». */
+const RECENT_UPDATES = 5;
 
 export function TaskPage({ id }: { id: string }) {
   const m = t().task;
@@ -36,6 +40,9 @@ function TaskBody({ task }: { task: Task }) {
   const seriesList = useLive(() => db.series.toArray(), []);
   const people = useLive(() => listPeople(), []);
   const updates = useLive(() => listTaskUpdates(task.id), [task.id]);
+  // ده اللي بيظهر في ملف المتابعة
+  const latestId = updates ? latestTextUpdate(updates)?.id : undefined;
+  const [showAll, setShowAll] = useState(false);
   const meeting = useLive(async () => (task.meetingId ? db.meetings.get(task.meetingId) : undefined), [task.meetingId]);
   const [picking, setPicking] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -107,10 +114,15 @@ function TaskBody({ task }: { task: Task }) {
         <h2>{m.history}</h2>
         {updates && updates.length === 0 && <p class="muted">{m.historyEmpty}</p>}
         <ol class="timeline">
-          {updates?.map((u) => (
-            <UpdateItem key={u.id} u={u} />
+          {(showAll ? updates : updates?.filter((u, i) => i < RECENT_UPDATES || u.id === latestId))?.map((u) => (
+            <UpdateItem key={u.id} u={u} latest={u.id === latestId} />
           ))}
         </ol>
+        {updates && updates.length > RECENT_UPDATES && (
+          <button class="btn ghost sm" onClick={() => setShowAll(!showAll)}>
+            {showAll ? fmt(m.showFewerUpdates, { n: RECENT_UPDATES }) : fmt(m.showAllUpdates, { n: updates.length })}
+          </button>
+        )}
       </section>
 
       <button class="btn danger-ghost" onClick={remove}>
@@ -127,11 +139,12 @@ function TaskBody({ task }: { task: Task }) {
   );
 }
 
-function UpdateItem({ u }: { u: TaskUpdate }) {
+function UpdateItem({ u, latest }: { u: TaskUpdate; latest: boolean }) {
   const m = t().task;
   return (
-    <li class={u.status ? 'status-change' : ''}>
+    <li class={`${u.status ? 'status-change' : ''} ${latest ? 'is-latest' : ''}`}>
       <span class="tl-date" dir="ltr">{formatDate(u.date)}</span>
+      {latest && <span class="latest-badge">{m.latestBadge}</span>}
       {u.status && (
         <p class="tl-status">
           {u.prevStatus
@@ -187,6 +200,7 @@ function UpdateComposer({ taskId }: { taskId: string }) {
   return (
     <section class="card composer">
       <h2>{m.addUpdate}</h2>
+      <Hint id="export-latest" text={m.hintExport} />
       <div class={`field ${tried && empty ? 'has-error' : ''}`}>
         <label for="upd-text">{m.updateText}</label>
         <textarea id="upd-text" rows={3} value={text} placeholder={m.updatePlaceholder} onInput={(e) => setText(e.currentTarget.value)} autoFocus />

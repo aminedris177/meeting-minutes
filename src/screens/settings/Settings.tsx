@@ -24,6 +24,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
   const [usage, setUsage] = useState<string>('');
   const standalone = isStandalone();
   const peopleCount = useLive(() => db.people.filter((p) => p.active).count(), []);
+  const counts = useLive(async () => ({ tasks: await db.tasks.count(), updates: await db.taskUpdates.count(), meetings: await db.meetings.count() }), []);
 
   useEffect(() => {
     void getPersistState().then(setPersist);
@@ -70,6 +71,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
             {m.storageUsage}: <span dir="ltr">{usage}</span>
           </p>
         )}
+        {counts && <p class="muted">{fmt(m.dataCounts, counts)}</p>}
         <p class="muted">
           {m.displayMode}: {standalone ? m.installed : m.inBrowser}
         </p>
