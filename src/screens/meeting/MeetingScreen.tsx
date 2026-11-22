@@ -3,7 +3,8 @@ import { useState } from 'preact/hooks';
 import { CloseIcon, TrashIcon } from '../../components/icons';
 import { Screen } from '../../components/Screen';
 import { useLive } from '../../db/live';
-import { deleteDraftMeeting } from '../../db/repos/meetings';
+import { isLastMeeting } from '../../db/repos/meetings';
+import { DeleteMeetingSheet } from './DeleteMeetingSheet';
 import { db } from '../../db/schema';
 import type { Meeting, Series } from '../../db/types';
 import { fmt, t } from '../../i18n';
@@ -35,10 +36,20 @@ export function MeetingScreen({ id }: { id: string }) {
 }
 
 function FinalMeeting({ meeting, series }: { meeting: Meeting; series: Series }) {
+  const last = useLive(() => isLastMeeting(meeting), [meeting.id, meeting.seriesId]);
+  const [deleting, setDeleting] = useState(false);
   return (
     <Screen title={`${fmt(t().meetings.meetingN, { n: meeting.number })} · ${formatDate(meeting.date)}`} back={`#/series/${series.id}`}>
       <p class="muted">{series.name}</p>
       <MinutesPanel meeting={meeting} />
+      {last && (
+        <button class="btn danger-ghost" onClick={() => setDeleting(true)}>
+          <TrashIcon width={18} height={18} /> {t().meeting.deleteFinal}
+        </button>
+      )}
+      {deleting && (
+        <DeleteMeetingSheet meeting={meeting} onClose={() => setDeleting(false)} onDeleted={() => navigate(`/series/${series.id}`)} />
+      )}
     </Screen>
   );
 }
@@ -62,15 +73,8 @@ function MeetingWizard({ meeting, series }: { meeting: Meeting; series: Series }
   };
   const exit = () => navigate(`/series/${series.id}`);
 
-  const removeDraft = async () => {
-    if (!confirm(fmt(m.confirmDelete, { n: meeting.number }))) return;
-    try {
-      await deleteDraftMeeting(meeting.id);
-      exit();
-    } catch {
-      alert(m.cantDelete);
-    }
-  };
+  const [deleting, setDeleting] = useState(false);
+  const removeDraft = () => setDeleting(true);
 
   return (
     <main class="screen wizard meeting">
@@ -83,6 +87,9 @@ function MeetingWizard({ meeting, series }: { meeting: Meeting; series: Series }
           <small class="header-sub">{series.name}</small>
         </h1>
         <span class="saved-tag">{m.saved}</span>
+        <button class="icon-btn" onClick={removeDraft} aria-label={m.deleteDraft} title={m.deleteDraft}>
+          <TrashIcon width={20} height={20} />
+        </button>
       </header>
 
       <nav class="steps">
@@ -125,6 +132,7 @@ function MeetingWizard({ meeting, series }: { meeting: Meeting; series: Series }
           </button>
         )}
       </footer>
+      {deleting && <DeleteMeetingSheet meeting={meeting} onClose={() => setDeleting(false)} onDeleted={exit} />}
     </main>
   );
 }

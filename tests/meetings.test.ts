@@ -6,6 +6,8 @@ import {
   buildMinutes,
   createMeeting,
   deleteDraftMeeting,
+  deleteMeeting,
+  isLastMeeting,
   finalizeMeeting,
   getDraft,
   listAttendance,
@@ -216,14 +218,39 @@ describe('deleteDraftMeeting', () => {
     expect((await createMeeting(s.id, '2026-11-20', d)).number).toBe(1);
   });
 
-  it('refuses drafts with new tasks and final meetings', async () => {
+  it('deleteDraftMeeting keeps new tasks (unlinked) and refuses final meetings', async () => {
     const d = freshDb();
     const { s } = await setup(d);
     const m = await createMeeting(s.id, '2026-11-20', d);
-    await createTask({ seriesId: s.id, description: 'جديدة', topic: '', ownerId: null, createdDate: '2026-11-01', priority: 'low', meetingId: m.id }, d);
-    await expect(deleteDraftMeeting(m.id, d)).rejects.toThrow();
+    const t = await createTask({ seriesId: s.id, description: 'جديدة', topic: '', ownerId: null, createdDate: '2026-11-01', priority: 'low', meetingId: m.id }, d);
+    await deleteDraftMeeting(m.id, d);
+    expect((await d.tasks.get(t.id))?.meetingId).toBeUndefined();
     const m2 = await createMeeting(s.id, '2026-11-20', d);
     await finalizeMeeting(m2.id, d);
     await expect(deleteDraftMeeting(m2.id, d)).rejects.toThrow();
+  });
+
+  it('deleteMeeting: draft with new tasks deleted too; final only if last', async () => {
+    const d = freshDb();
+    const { s } = await setup(d);
+    const m1 = await createMeeting(s.id, '2026-11-01', d);
+    await finalizeMeeting(m1.id, d);
+    const m2 = await createMeeting(s.id, '2026-11-08', d);
+    const t = await createTask({ seriesId: s.id, description: 'جديدة', topic: '', ownerId: null, createdDate: '2026-11-08', priority: 'low', meetingId: m2.id }, d);
+    await finalizeMeeting(m2.id, d);
+    // الأول مش آخر اجتماع → مرفوض
+    expect(await isLastMeeting(m1, d)).toBe(false);
+    await expect(deleteMeeting(m1.id, { deleteNewTasks: false }, d)).rejects.toThrow();
+    // الأخير → يتمسح هو ومهامه
+    await deleteMeeting(m2.id, { deleteNewTasks: true }, d);
+    expect(await d.meetings.get(m2.id)).toBeUndefined();
+    expect(await d.tasks.get(t.id)).toBeUndefined();
+    expect(await d.taskUpdates.where('taskId').equals(t.id).count()).toBe(0);
+    expect((await d.series.get(s.id))!.meetingCounter).toBe(1);
+    // دلوقتي الأول بقى الأخير
+    expect(await isLastMeeting(m1, d)).toBe(true);
+    // رقم المهمة مبيترجعش
+    const t2 = await createTask({ seriesId: s.id, description: 'تانية', topic: '', ownerId: null, createdDate: '2026-11-08', priority: 'low' }, d);
+    expect(t2.number).toBeGreaterThan(t.number);
   });
 });

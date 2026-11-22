@@ -12,6 +12,7 @@ import { formatDate, todayISO } from '../../lib/dates';
 import { navigate } from '../../lib/router';
 import { runSeriesExport } from '../../lib/backupActions';
 import { CalendarSheet } from './CalendarSheet';
+import { DeleteMeetingSheet } from '../meeting/DeleteMeetingSheet';
 
 export function SeriesPage({ id }: { id: string }) {
   const series = useLive(async () => (await db.series.get(id)) ?? null, [id]);
@@ -37,6 +38,7 @@ function SeriesBody({ id }: { id: string }) {
   const summary = useLive(async () => (await listSeriesSummaries(today)).find((x) => x.series.id === id), [id, today]);
   const [busy, setBusy] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
+  const [cancelDraft, setCancelDraft] = useState(false);
   if (!series) return <main class="screen" />;
 
   const start = async () => {
@@ -91,7 +93,13 @@ function SeriesBody({ id }: { id: string }) {
             )}
           </button>
         )}
+        {draft && !series.archived && (
+          <button class="btn ghost sm cancel-draft" onClick={() => setCancelDraft(true)}>
+            {t().meeting.deleteDraft}
+          </button>
+        )}
       </section>
+      {cancelDraft && draft && <DeleteMeetingSheet meeting={draft} onClose={() => setCancelDraft(false)} onDeleted={() => setCancelDraft(false)} />}
 
       {summary && (
         <button class="card nav-card" onClick={openFollowup}>

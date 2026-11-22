@@ -1209,3 +1209,14 @@ a.chip {
   color: var(--danger);
   font-weight: 700;
 }
+.del-tasks {
+  margin: 4px 0 10px;
+  padding-inline-start: 18px;
+}
+.del-tasks li {
+  margin-bottom: 2px;
+}
+.series-hero .cancel-draft {
+  margin-top: 8px;
+  color: var(--danger);
+}

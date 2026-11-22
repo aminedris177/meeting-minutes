@@ -387,15 +387,43 @@ export async function reopenMeeting(id: ID, d: AppDB = db): Promise<void> {
  * حذف مسودة اجتماع. مسموح بس لو متعملش فيها مهام جديدة.
  * لو كانت آخر رقم، العدّاد بيرجع علشان ترقيم الاجتماعات ميبقاش فيه فراغ.
  */
-export async function deleteDraftMeeting(id: ID, d: AppDB = db): Promise<void> {
+/** هل ده آخر اجتماع في السلسلة (أعلى رقم)؟ حذف الاجتماع المعتمد مسموح للآخر بس. */
+export async function isLastMeeting(m: Pick<Meeting, 'id' | 'seriesId' | 'number'>, d: AppDB = db): Promise<boolean> {
+  const all = await d.meetings.where('seriesId').equals(m.seriesId).toArray();
+  return all.every((x) => x.id === m.id || x.number < m.number);
+}
+
+/** المهام اللي اتفتحت في الاجتماع ده. */
+export async function meetingNewTasks(id: ID, d: AppDB = db): Promise<Task[]> {
+  return d.tasks.where('meetingId').equals(id).toArray();
+}
+
+/**
+ * حذف اجتماع: المسودة دايماً، والمعتمد لو آخر اجتماع في السلسلة بس.
+ * - الحضور والقرارات ونصوص التحديثات المكتوبة فيه بتتمسح؛ تغييرات الحالة بتفضل في سجل المهمة من غير ربط.
+ * - بنود السجل التراكمي بتفضل (من غير ربط بالاجتماع).
+ * - المهام اللي اتفتحت فيه: بتتمسح مع سجلها (deleteNewTasks) أو بتفضل في المتابعة.
+ * - رقم الاجتماع بيرجع متاح لو كان آخر رقم. (أرقام المهام مبتترجعش — الترقيم ثابت.)
+ */
+export async function deleteMeeting(id: ID, opts: { deleteNewTasks: boolean }, d: AppDB = db): Promise<void> {
   await d.transaction('rw', [d.meetings, d.series, d.attendance, d.decisions, d.taskUpdates, d.tasks, d.registerItems], async () => {
     const m = await d.meetings.get(id);
     if (!m) return;
-    if (m.status !== 'draft') throw new Error('Only drafts can be deleted');
-    if ((await d.tasks.where('meetingId').equals(id).count()) > 0) throw new Error('Meeting has new tasks');
+    if (m.status !== 'draft' && !(await isLastMeeting(m, d))) throw new Error('Only the last meeting can be deleted');
+    const newTasks = await d.tasks.where('meetingId').equals(id).toArray();
+    if (opts.deleteNewTasks) {
+      for (const t of newTasks) {
+        await d.taskUpdates.where('taskId').equals(t.id).delete();
+        await d.decisions.filter((x) => x.taskId === t.id).modify((x) => {
+          delete x.taskId;
+        });
+        await d.tasks.delete(t.id);
+      }
+    } else {
+      for (const t of newTasks) await d.tasks.update(t.id, { meetingId: undefined });
+    }
     await d.attendance.where('meetingId').equals(id).delete();
     await d.decisions.where('meetingId').equals(id).delete();
-    // نصوص التحديث المكتوبة في المسودة بتتمسح، وتغييرات الحالة بتفضل في سجل المهمة من غير ربط بالاجتماع
     for (const u of await d.taskUpdates.where('meetingId').equals(id).toArray()) {
       if (u.status) await d.taskUpdates.update(u.id, { meetingId: undefined });
       else await d.taskUpdates.delete(u.id);
@@ -409,6 +437,13 @@ export async function deleteDraftMeeting(id: ID, d: AppDB = db): Promise<void> {
       await d.series.update(series.id, { meetingCounter: m.number - 1 });
     }
   });
+}
+
+/** توافق مع الكود القديم: حذف مسودة مع الاحتفاظ بمهامها الجديدة. */
+export async function deleteDraftMeeting(id: ID, d: AppDB = db): Promise<void> {
+  const m = await d.meetings.get(id);
+  if (m && m.status !== 'draft') throw new Error('Only drafts can be deleted');
+  await deleteMeeting(id, { deleteNewTasks: false }, d);
 }
 
 export async function listMeetings(seriesId: ID, d: AppDB = db): Promise<Meeting[]> {

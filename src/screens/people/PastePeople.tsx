@@ -1,7 +1,7 @@
 // إضافة أشخاص من قائمة ملصوقة: اسم في كل سطر، واللقب بيتعرف لوحده.
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { Sheet } from '../../components/Sheet';
-import { addPeopleBulk, existingNameKeys, titleLabel } from '../../db/repos/people';
+import { addPeopleBulk, existingNameKeys, titleName } from '../../db/repos/people';
 import { nameKey, parseNameList, TITLES, type Title } from '../../domain/names';
 import { fmt, t } from '../../i18n';
 
@@ -92,7 +92,7 @@ export function PastePeople({ onClose }: { onClose: () => void }) {
                   onChange={(e) => setTitleOverrides({ ...titleOverrides, [i]: e.currentTarget.value as Title })}
                 >
                   {TITLES.map((v) => (
-                    <option value={v}>{v ? titleLabel(v) : m.noTitle}</option>
+                    <option value={v}>{v ? titleName(v) : m.noTitle}</option>
                   ))}
                 </select>
                 <span class="list-main">

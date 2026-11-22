@@ -94,6 +94,11 @@ export function titleLabel(title: string): string {
   return t().titles[title] ?? title;
 }
 
+/** اسم اللقب في الاختيار (أستاذ / أستاذة / م/ / د/). */
+export function titleName(title: string): string {
+  return t().titleNames[title] ?? titleLabel(title);
+}
+
 export function displayName(p: Pick<Person, 'name' | 'title'>): string {
   return p.title ? `${titleLabel(p.title)} ${p.name}` : p.name;
 }

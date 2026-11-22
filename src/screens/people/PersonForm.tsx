@@ -3,7 +3,7 @@ import { useState } from 'preact/hooks';
 import { Sheet } from '../../components/Sheet';
 import { Segmented, TextField, Toggle } from '../../components/fields';
 import { TrashIcon } from '../../components/icons';
-import { addPerson, titleLabel, updatePerson, type PersonInput } from '../../db/repos/people';
+import { addPerson, titleName, updatePerson, type PersonInput } from '../../db/repos/people';
 import type { Person } from '../../db/types';
 import { normalizeTitle, splitTitle, TITLES } from '../../domain/names';
 import { fmt, t } from '../../i18n';
@@ -40,7 +40,7 @@ export function PersonForm({ person, onClose, onSaved, onRemove }: Props) {
   // اختيارات اللقب: الثابتة + لقب قديم غير معروف لو موجود
   const titleOptions = [...TITLES, ...(form.title && !(TITLES as readonly string[]).includes(form.title) ? [form.title] : [])].map((v) => ({
     value: v,
-    label: v ? titleLabel(v) : m.noTitle,
+    label: v ? titleName(v) : m.noTitle,
   }));
 
   const save = async () => {
