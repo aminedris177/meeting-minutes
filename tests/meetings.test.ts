@@ -21,7 +21,7 @@ import {
   updateMeeting,
 } from '../src/db/repos/meetings';
 import { addPerson } from '../src/db/repos/people';
-import { createSeries } from '../src/db/repos/series';
+import { createSeries, deleteSeriesFully, seriesContents, setSeriesArchived } from '../src/db/repos/series';
 import { createTask, listTaskUpdates, setTaskStatus } from '../src/db/repos/tasks';
 import { emptySeriesDraft } from '../src/domain/series';
 import type { AppDB } from '../src/db/schema';
@@ -252,5 +252,29 @@ describe('deleteDraftMeeting', () => {
     // رقم المهمة مبيترجعش
     const t2 = await createTask({ seriesId: s.id, description: 'تانية', topic: '', ownerId: null, createdDate: '2026-11-08', priority: 'low' }, d);
     expect(t2.number).toBeGreaterThan(t.number);
+  });
+});
+
+describe('deleteSeriesFully', () => {
+  it('needs archive first, then removes everything of the series but keeps people and other series', async () => {
+    const d = freshDb();
+    const { a, s } = await setup(d);
+    const other = await createSeries({ ...emptySeriesDraft(), name: 'تانية', taskPrefix: 'Z', memberIds: [a.id], firstMeetingDate: '2026-11-16' }, d);
+    const keep = await createTask({ seriesId: other.id, description: 'تفضل', topic: '', ownerId: a.id, createdDate: '2026-11-01', priority: 'low' }, d);
+    const t = await createTask({ seriesId: s.id, description: 'مهمة', topic: '', ownerId: a.id, createdDate: '2026-11-01', priority: 'low' }, d);
+    const m = await createMeeting(s.id, '2026-11-20', d);
+    await saveMeetingUpdate(m, t.id, 'نص', '', d);
+    await finalizeMeeting(m.id, d);
+    expect(await seriesContents(s.id, d)).toMatchObject({ meetings: 1, tasks: 1 });
+    await expect(deleteSeriesFully(s.id, d)).rejects.toThrow();
+    await setSeriesArchived(s.id, true, d);
+    await deleteSeriesFully(s.id, d);
+    expect(await d.series.get(s.id)).toBeUndefined();
+    expect(await d.meetings.where('seriesId').equals(s.id).count()).toBe(0);
+    expect(await d.tasks.get(t.id)).toBeUndefined();
+    expect(await d.taskUpdates.where('taskId').equals(t.id).count()).toBe(0);
+    expect(await d.attendance.where('meetingId').equals(m.id).count()).toBe(0);
+    expect(await d.people.get(a.id)).toBeTruthy();
+    expect(await d.tasks.get(keep.id)).toBeTruthy();
   });
 });

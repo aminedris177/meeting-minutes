@@ -9,6 +9,8 @@ import {
   canDeleteSeries,
   createSeries,
   deleteSeries,
+  deleteSeriesFully,
+  seriesContents,
   seriesUsesPrefix,
   setSeriesArchived,
   updateSeries,
@@ -25,6 +27,8 @@ import { formatDate } from '../../lib/dates';
 import { navigate } from '../../lib/router';
 import { MemberPicker } from './MemberPicker';
 import { MinutesPreview } from './MinutesPreview';
+import { Sheet } from '../../components/Sheet';
+import { saveSafetySnapshot } from '../../db/backup';
 
 const STEPS = ['name', 'prefix', 'recurrence', 'members', 'topics', 'sections'] as const;
 type Step = (typeof STEPS)[number];
@@ -460,6 +464,7 @@ function WizardBody({ existing }: { existing?: Series }) {
 function DangerZone({ series }: { series: Series }) {
   const m = t().series;
   const [deletable, setDeletable] = useState<boolean | null>(null);
+  const [full, setFull] = useState(false);
   useEffect(() => {
     void canDeleteSeries(series.id).then(setDeletable);
   }, [series.id]);
@@ -486,7 +491,65 @@ function DangerZone({ series }: { series: Series }) {
           <TrashIcon width={18} height={18} /> {m.delete}
         </button>
       )}
-      {deletable === false && <p class="muted small">{m.archiveInstead}</p>}
+      {deletable === false && !series.archived && <p class="muted small">{m.archiveInstead}</p>}
+      {deletable === false && series.archived && (
+        <button class="btn danger-ghost full" onClick={() => setFull(true)}>
+          <TrashIcon width={18} height={18} /> {m.deleteFully}
+        </button>
+      )}
+      {full && <DeleteSeriesSheet series={series} onClose={() => setFull(false)} />}
     </section>
+  );
+}
+
+function DeleteSeriesSheet({ series, onClose }: { series: Series; onClose: () => void }) {
+  const m = t().series.delFull;
+  const c = useLive(() => seriesContents(series.id), [series.id]);
+  const [typed, setTyped] = useState('');
+  const [busy, setBusy] = useState(false);
+  const ok = normalizePrefix(typed) === series.taskPrefix;
+  const run = async () => {
+    if (!ok || busy) return;
+    setBusy(true);
+    try {
+      await saveSafetySnapshot('before-delete-series', __APP_VERSION__);
+      await deleteSeriesFully(series.id);
+      navigate('/');
+    } catch (e) {
+      alert(fmt(t().common.error, { msg: String(e) }));
+      setBusy(false);
+    }
+  };
+  return (
+    <Sheet
+      title={fmt(m.title, { name: series.name })}
+      onClose={onClose}
+      footer={
+        <>
+          <button class="btn danger grow" onClick={() => void run()} disabled={!ok || busy}>
+            {m.confirm}
+          </button>
+          <button class="btn ghost" onClick={onClose}>
+            {t().common.cancel}
+          </button>
+        </>
+      }
+    >
+      <p class="warn">{m.contents}</p>
+      {c && (
+        <ul class="del-tasks">
+          <li>{fmt(m.meetings, { n: c.meetings })}</li>
+          <li>{fmt(m.tasks, { n: c.tasks })}</li>
+          <li>{fmt(m.decisions, { n: c.decisions })}</li>
+          <li>{fmt(m.register, { n: c.register })}</li>
+        </ul>
+      )}
+      <p>{m.people}</p>
+      <p class="muted small">{m.safety}</p>
+      <div class="field">
+        <label for="del-prefix">{fmt(m.type, { prefix: series.taskPrefix })}</label>
+        <input id="del-prefix" dir="ltr" autoCapitalize="characters" autoComplete="off" value={typed} onInput={(e) => setTyped(e.currentTarget.value)} />
+      </div>
+    </Sheet>
   );
 }

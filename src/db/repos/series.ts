@@ -105,3 +105,45 @@ export async function listSeriesSummaries(today: ISODate, d: AppDB = db): Promis
   );
   return result.sort((a, b) => Number(a.series.archived) - Number(b.series.archived) || a.series.createdAt - b.series.createdAt);
 }
+
+export interface SeriesContents {
+  meetings: number;
+  tasks: number;
+  decisions: number;
+  register: number;
+}
+
+/** محتوى السلسلة (للعرض قبل الحذف النهائي). */
+export async function seriesContents(id: ID, d: AppDB = db): Promise<SeriesContents> {
+  const meetingIds = (await d.meetings.where('seriesId').equals(id).primaryKeys()) as ID[];
+  const [tasks, register, decisions] = await Promise.all([
+    d.tasks.where('seriesId').equals(id).count(),
+    d.registerItems.where('seriesId').equals(id).count(),
+    meetingIds.length ? d.decisions.where('meetingId').anyOf(meetingIds).count() : Promise.resolve(0),
+  ]);
+  return { meetings: meetingIds.length, tasks, decisions, register };
+}
+
+/**
+ * حذف سلسلة نهائياً بكل اللي فيها (اجتماعات، حضور، قرارات، مهام وسجلها، السجل التراكمي).
+ * مسموح للسلسلة المؤرشفة بس. الأشخاص في الدليل مبيتمسحوش.
+ */
+export async function deleteSeriesFully(id: ID, d: AppDB = db): Promise<void> {
+  await d.transaction('rw', [d.series, d.meetings, d.attendance, d.decisions, d.tasks, d.taskUpdates, d.registerItems], async () => {
+    const s = await d.series.get(id);
+    if (!s) return;
+    if (!s.archived) throw new Error('Archive the series first');
+    const meetingIds = (await d.meetings.where('seriesId').equals(id).primaryKeys()) as ID[];
+    const taskIds = (await d.tasks.where('seriesId').equals(id).primaryKeys()) as ID[];
+    if (meetingIds.length) {
+      await d.attendance.where('meetingId').anyOf(meetingIds).delete();
+      await d.decisions.where('meetingId').anyOf(meetingIds).delete();
+      await d.taskUpdates.where('meetingId').anyOf(meetingIds).delete();
+    }
+    if (taskIds.length) await d.taskUpdates.where('taskId').anyOf(taskIds).delete();
+    await d.tasks.where('seriesId').equals(id).delete();
+    await d.registerItems.where('seriesId').equals(id).delete();
+    await d.meetings.where('seriesId').equals(id).delete();
+    await d.series.delete(id);
+  });
+}

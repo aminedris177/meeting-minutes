@@ -32,6 +32,7 @@ export function HomeScreen() {
         </>
       }
     >
+      {summaries === undefined && <p class="muted center loading-dots" aria-busy="true">…</p>}
       <AlertsBanner />
       <BackupReminder />
       {org && !org.name && (

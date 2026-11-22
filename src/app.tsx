@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useState } from 'preact/hooks';
+import { resetScroll } from './lib/scroll';
 import { useRegisterSW } from 'virtual:pwa-register/preact';
 import { BottomNav } from './components/BottomNav';
 import { InstallHint } from './components/InstallHint';
@@ -66,7 +67,8 @@ export function App() {
   }, [offlineReady]);
 
   // تمرير لأعلى عند تغيير الشاشة
-  useEffect(() => window.scrollTo(0, 0), [path]);
+  // (على الآيفون لازم نوقف التمرير اللي لسه شغال، وإلا الشاشة الجديدة تتفتح في نص صفحة فاضية)
+  useLayoutEffect(() => resetScroll(), [path]);
 
   // قفل الـ PIN: بيتطلب لما التطبيق يتفتح من جديد بس. بعد الفتح بيفضل مفتوح طول ما التطبيق شغال
   // (إعادة التحميل/سحب الشاشة/الخروج والرجوع مش بيقفلوه) — الحالة في sessionStorage.
