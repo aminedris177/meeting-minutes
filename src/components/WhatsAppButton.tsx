@@ -3,19 +3,19 @@ import { useLive } from '../db/live';
 import { db } from '../db/schema';
 import { isOpen } from '../domain/delay';
 import { t } from '../i18n';
-import { buildOwnerMessage, openWhatsApp } from '../lib/whatsapp';
+import { buildOwnerMessage, messageSeries, openWhatsApp } from '../lib/whatsapp';
 
 export function WhatsAppButton({ ownerId, seriesId, small }: { ownerId: string; seriesId?: string; small?: boolean }) {
   const m = t().followup;
   const data = useLive(async () => {
     const person = await db.people.get(ownerId);
     const tasks = (await db.tasks.where('ownerId').equals(ownerId).toArray()).filter((x) => (!seriesId || seriesId === 'all' || x.seriesId === seriesId) && isOpen(x));
-    return { person, tasks };
+    return { person, tasks, series: await messageSeries(tasks) };
   }, [ownerId, seriesId]);
   if (!data?.person) return null;
   const send = () => {
     if (!data.tasks.length) return alert(m.whatsappNone);
-    openWhatsApp(buildOwnerMessage(data.person!, data.tasks));
+    openWhatsApp(buildOwnerMessage(data.person!, data.tasks, data.series));
   };
   return (
     <button class={`btn wa-btn ${small ? 'sm' : ''}`} onClick={send} disabled={!data.tasks.length}>

@@ -29,30 +29,78 @@ export function groupByDue<T extends { task: Pick<Task, 'status' | 'targetDate'>
 
 export interface MessageLabels {
   greeting: string; // «أهلاً {name}،»
-  intro: string;
-  late: string; // «متأخرة {n} يوم»
-  due: string; // «الموعد {date}»
+  introOne: string; // «عندك {n} مهمة مفتوحة في «{series}»:»
+  introMany: string; // «عندك {n} مهمة مفتوحة:»
+  code: string; // «رقم المهمة: {code}»
+  status: string; // «الحالة: {status}»
+  late: string; // «⚠️ متأخرة {n} يوم (كان موعدها {date})»
+  due: string; // «الموعد: {date}»
   noDate: string;
+  next: string; // «الاجتماع القادم: {date}»
+  closing: string;
   statuses: Record<TaskStatus, string>;
   formatDate: (d: ISODate) => string;
 }
 
-/** رسالة متابعة لمسؤول: كل مهامه المفتوحة، المتأخر الأول. */
+export interface MessageSeries {
+  name: string;
+  nextDate?: ISODate;
+}
+
+// علامات الاتجاه: واتساب بيحدد اتجاه السطر من أول حرف. في العربي بنبدأ كل سطر بـ RLM،
+// وبنعزل الأرقام والتواريخ والأكواد الإنجليزي بـ LRM علشان متتقلبش ولا تبدّل مكانها.
+const RLM = '\u200F';
+const LRM = '\u200E';
+const ltr = (s: string, rtl: boolean) => (rtl ? LRM + s + LRM : s);
+const fill = (tpl: string, v: Record<string, string | number>) => tpl.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+
+/**
+ * رسالة متابعة لمسؤول (واتساب): كل مهمة في كذا سطر، المتأخر الأول، ومجمّعة حسب السلسلة
+ * لو المهام من أكتر من سلسلة، ومع تاريخ الاجتماع القادم لكل سلسلة.
+ */
 export function ownerMessage(
   name: string,
-  tasks: Pick<Task, 'code' | 'description' | 'status' | 'targetDate'>[],
+  tasks: Pick<Task, 'code' | 'description' | 'status' | 'targetDate' | 'seriesId'>[],
+  series: Record<string, MessageSeries>,
   today: ISODate,
   L: MessageLabels,
+  rtl: boolean,
 ): string {
   const open = tasks
     .filter(isOpen)
     .sort((a, b) => delayDays(b, today) - delayDays(a, today) || (a.targetDate ?? '9').localeCompare(b.targetDate ?? '9'));
-  const lines = open.map((t) => {
-    const d = delayDays(t, today);
-    const when = d > 0 ? L.late.replace('{n}', String(d)) : t.targetDate ? L.due.replace('{date}', L.formatDate(t.targetDate)) : L.noDate;
-    return `• ${t.code} — ${t.description} (${L.statuses[t.status]} · ${when})`;
-  });
-  return [L.greeting.replace('{name}', name), L.intro.replace('{n}', String(open.length)), '', ...lines].join('\n');
+  const groups: { id: string; items: typeof open }[] = [];
+  for (const t of open) {
+    let g = groups.find((x) => x.id === t.seriesId);
+    if (!g) groups.push((g = { id: t.seriesId, items: [] }));
+    g.items.push(t);
+  }
+  const date = (d: ISODate) => ltr(L.formatDate(d), rtl);
+  const one = groups.length === 1;
+  const lines: string[] = [fill(L.greeting, { name })];
+  lines.push(one ? fill(L.introOne, { n: open.length, series: series[groups[0].id]?.name ?? '' }) : fill(L.introMany, { n: open.length }));
+  let n = 0;
+  for (const g of groups) {
+    const s = series[g.id];
+    if (!one) {
+      lines.push('', `*${s?.name ?? ''}*`);
+      if (s?.nextDate) lines.push(fill(L.next, { date: date(s.nextDate) }));
+    }
+    for (const t of g.items) {
+      n++;
+      const d = delayDays(t, today);
+      lines.push('', `${n}- *${t.description.trim()}*`);
+      lines.push('   ' + fill(L.code, { code: ltr(t.code, rtl) }));
+      lines.push('   ' + fill(L.status, { status: L.statuses[t.status] }));
+      if (d > 0 && t.targetDate) lines.push('   ' + fill(L.late, { n: ltr(String(d), rtl), date: date(t.targetDate) }));
+      else lines.push('   ' + (t.targetDate ? fill(L.due, { date: date(t.targetDate) }) : L.noDate));
+    }
+  }
+  lines.push('');
+  if (one && series[groups[0].id]?.nextDate) lines.push(fill(L.next, { date: date(series[groups[0].id].nextDate!) }));
+  lines.push(L.closing);
+  // كل سطر في العربي يبدأ بعلامة يمين-لشمال
+  return lines.map((x) => (rtl && x ? RLM + x : x)).join('\n');
 }
 
 export interface OwnerStats {

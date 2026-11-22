@@ -31,19 +31,63 @@ describe('due groups', () => {
 });
 
 describe('owner message and stats', () => {
-  it('lists open tasks, most late first', () => {
+  const L = {
+    greeting: 'أهلاً {name}،',
+    introOne: 'عندك {n} مهمة مفتوحة في «{series}»:',
+    introMany: 'عندك {n} مهمة مفتوحة:',
+    code: 'رقم المهمة: {code}',
+    status: 'الحالة: {status}',
+    late: '⚠️ متأخرة {n} يوم (كان موعدها {date})',
+    due: 'الموعد: {date}',
+    noDate: 'الموعد: لسه متحددش',
+    next: 'الاجتماع القادم: {date}',
+    closing: 'برجاء إرسال آخر تحديث قبل الاجتماع القادم.',
+    statuses: { not_started: 'لم يبدأ', in_progress: 'جارٍ', blocked: 'معلّق', done: 'تم', cancelled: 'ملغي' } as const,
+    formatDate: (d: string) => d.split('-').reverse().join('/'),
+  };
+  const strip = (x: string) => x.replace(/[\u200E\u200F]/g, '');
+
+  it('one series: lines per task, most late first, next meeting and closing line', () => {
     const msg = ownerMessage(
       'م/ شخص',
-      [task({ code: 'Q-02', targetDate: '2026-11-30' }), task({ code: 'Q-01', targetDate: '2026-11-09' }), task({ code: 'Q-03', status: 'done' })],
+      [task({ code: 'Q-02', description: 'تانية', targetDate: '2026-11-30' }), task({ code: 'Q-01', description: 'أولى', targetDate: '2026-11-09' }), task({ code: 'Q-03', status: 'done' })],
+      { s: { name: 'اجتماع الجودة', nextDate: '2026-11-26' } },
       TODAY,
-      { greeting: 'أهلاً {name}،', intro: 'مهامك ({n}):', late: 'متأخرة {n} يوم', due: 'الموعد {date}', noDate: '-', statuses: { not_started: 'لم يبدأ', in_progress: 'جارٍ', blocked: 'معلّق', done: 'تم', cancelled: 'ملغي' }, formatDate: (d) => d },
+      L,
+      true,
     );
-    expect(msg).toContain('أهلاً م/ شخص،');
-    expect(msg).toContain('مهامك (2):');
-    expect(msg.indexOf('Q-01')).toBeLessThan(msg.indexOf('Q-02'));
-    expect(msg).toContain('متأخرة 10 يوم');
-    expect(msg).not.toContain('Q-03');
+    const plain = strip(msg);
+    expect(plain).toContain('أهلاً م/ شخص،');
+    expect(plain).toContain('عندك 2 مهمة مفتوحة في «اجتماع الجودة»:');
+    expect(plain).toContain('1- *أولى*');
+    expect(plain).toContain('رقم المهمة: Q-01');
+    expect(plain).toContain('⚠️ متأخرة 10 يوم (كان موعدها 09/11/2026)');
+    expect(plain).toContain('الموعد: 30/11/2026');
+    expect(plain.indexOf('Q-01')).toBeLessThan(plain.indexOf('Q-02'));
+    expect(plain).not.toContain('Q-03');
+    expect(plain).toContain('الاجتماع القادم: 26/11/2026');
+    expect(plain.trim().endsWith('برجاء إرسال آخر تحديث قبل الاجتماع القادم.')).toBe(true);
+    // كل سطر مش فاضي بيبدأ بعلامة يمين-لشمال، والكود معزول بعلامة شمال-ليمين
+    expect(msg.split('\n').filter(Boolean).every((x) => x.startsWith('\u200F'))).toBe(true);
+    expect(msg).toContain('\u200EQ-01\u200E');
   });
+
+  it('several series: grouped with each series name and next meeting; English has no direction marks', () => {
+    const msg = ownerMessage(
+      'Eng. Person',
+      [task({ code: 'A-01', seriesId: 'a', targetDate: '2026-11-25' }), task({ code: 'B-01', seriesId: 'b' })],
+      { a: { name: 'Series A', nextDate: '2026-11-24' }, b: { name: 'Series B' } },
+      TODAY,
+      { ...L, introMany: 'You have {n} open tasks:', next: 'Next meeting: {date}' },
+      false,
+    );
+    expect(msg).not.toMatch(/[\u200E\u200F]/);
+    expect(msg).toContain('You have 2 open tasks:');
+    expect(msg).toContain('*Series A*\nNext meeting: 24/11/2026');
+    expect(msg).toContain('*Series B*');
+    expect(msg.indexOf('Series A')).toBeLessThan(msg.indexOf('Series B'));
+  });
+
   it('counts open, overdue, closed and on-time per owner', () => {
     const s = ownerStats(
       [
