@@ -1265,3 +1265,23 @@ a.chip {
   font-size: 0.75rem;
   font-weight: 600;
 }
+/* الملفات المصدّرة */
+.files-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 2px 10px;
+}
+.file-row {
+  gap: 8px;
+}
+.file-row .file-name {
+  word-break: break-all;
+  font-size: 0.92rem;
+}
+.file-row input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}

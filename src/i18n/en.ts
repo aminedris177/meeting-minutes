@@ -781,6 +781,8 @@ export const en: Messages = {
         tips: [
           'The follow-up Excel file can be imported back into the app.',
           'The follow-up file shows only the latest update of each task. The minutes show the update written in that meeting.',
+          'A copy of every file you export is saved in the app automatically: Settings → “Exported files”. They are grouped by series; share them again or delete them (one by one, or “Select” for several). The file is still downloaded or shared as before.',
+          'Storage: “Delete files older than 3 months” frees space. If storage passes 80%, a notice shows on Home. If it is completely full, exporting still works but the copy is not saved in the app.',
         ],
       },
       {
@@ -809,7 +811,7 @@ export const en: Messages = {
           'Before any restore, the app saves a safety copy of the current data. Go back to it from “Automatic safety copies”.',
           'Move a series to another phone: series page → “Export series settings”; on the other phone: Settings → “Import a series from file”.',
         ],
-        tips: ['If the last backup is more than 7 days old, a reminder shows on Home.', 'Fastest way: the cloud button ☁ at the top of Home makes a backup and opens sharing right away.'],
+        tips: ['If the last backup is more than 7 days old, a reminder shows on Home.', 'Fastest way: the cloud button ☁ at the top of Home makes a backup and opens sharing right away.', 'Exported files (minutes and follow-up files) are not included in the backup, to keep it small. The app can export them again from your data at any time.'],
       },
       {
         id: 'pin',
@@ -873,6 +875,31 @@ export const en: Messages = {
     minutes: 'Minutes',
     backup: 'Backup_MeetingMinutes',
     series: 'Series',
+    saveFull: 'The file was exported, but its copy was not saved in the app because storage is full. Delete old files in Settings → Exported files.',
+    saveFailed: 'The file was exported, but its copy was not saved in the app.',
+  },
+
+  exported: {
+    title: 'Exported files',
+    navHint: '{n} files · {size}',
+    intro: 'A copy of every file you export is saved here automatically. Share it again, save it to your phone or delete it. These files are not included in backups.',
+    total: 'Total: {n} files · {size}',
+    empty: 'No files yet. Any file you export (minutes, follow-up, backup…) will appear here.',
+    general: 'General',
+    kinds: { minutes: 'Minutes', followup: 'Follow-up file', backup: 'Backup', series: 'Series settings', calendar: 'Calendar', other: 'File' },
+    share: 'Share',
+    remove: 'Delete',
+    select: 'Select',
+    cancelSelect: 'Cancel selection',
+    selectAll: 'Select all',
+    removeSelected: 'Delete selected ({n})',
+    confirmRemove: 'Delete {n} files from the app? (Copies in Downloads or Files are not affected.)',
+    removeOld: 'Delete files older than 3 months',
+    confirmOld: 'Delete all files older than 3 months?',
+    removedOld: 'Deleted {n} files.',
+    noneOld: 'No files older than 3 months.',
+    storageWarn: 'App storage is almost full ({pct}%). Delete old files in “Exported files”.',
+    open: 'Open files',
   },
 
   install: {

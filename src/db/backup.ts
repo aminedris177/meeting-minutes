@@ -1,6 +1,7 @@
 // النسخ الاحتياطي والاسترجاع: ملف JSON واحد فيه كل حاجة (واللوجو base64) ورقم نسخة الـ schema.
 // + تصدير/استيراد إعدادات سلسلة واحدة لجهاز تاني.
 import Dexie from 'dexie';
+import { clearAllFiles } from './files';
 import { nameKey } from '../domain/names';
 import { t } from '../i18n';
 import { AppDB, db, LATEST_VERSION, newId } from './schema';
@@ -211,6 +212,8 @@ export async function safeRestore(b: BackupFile, appVersion: string, d: AppDB = 
 /** مسح كل البيانات (لما الـ PIN يتنسي) — مع نسخة أمان في الأول. */
 export async function wipeAllData(appVersion: string, d: AppDB = db): Promise<void> {
   await saveSafetySnapshot('before-wipe', appVersion, d);
+  // الملفات المصدّرة فيها بيانات كمان (لو مسح بسبب نسيان الـ PIN)
+  await clearAllFiles().catch(() => {});
   await d.transaction('rw', TABLES.map((t) => d.table(t)), async () => {
     for (const t of TABLES) await d.table(t).clear();
   });

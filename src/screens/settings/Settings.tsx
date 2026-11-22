@@ -12,6 +12,7 @@ import { AppearanceCard } from './AppearanceCard';
 import { OrgCard } from './OrgCard';
 import { PinCard } from './PinCard';
 import { BadgeCard } from './BadgeCard';
+import { listFiles } from '../../db/files';
 
 interface Props {
   offlineReady: boolean;
@@ -24,6 +25,10 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
   const [usage, setUsage] = useState<string>('');
   const standalone = isStandalone();
   const peopleCount = useLive(() => db.people.filter((p) => p.active).count(), []);
+  const exported = useLive(async () => {
+    const fs = await listFiles();
+    return { n: fs.length, size: fs.reduce((s, f) => s + f.size, 0) };
+  }, []);
   const counts = useLive(async () => ({ tasks: await db.tasks.count(), updates: await db.taskUpdates.count(), meetings: await db.meetings.count() }), []);
 
   useEffect(() => {
@@ -60,6 +65,13 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
       </a>
 
       <BackupCard />
+      <a class="card nav-card" href="#/settings/files">
+        <span class="list-main">
+          <span class="list-title">{t().exported.title}</span>
+          {exported && <span class="list-sub">{fmt(t().exported.navHint, { n: exported.n, size: formatBytes(exported.size) })}</span>}
+        </span>
+        <ChevronIcon />
+      </a>
       <PinCard />
       <BadgeCard />
 

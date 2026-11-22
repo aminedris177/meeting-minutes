@@ -12,6 +12,7 @@ import { safeFileName, shareOrDownload } from '../../export/share';
 import { fmt, t } from '../../i18n';
 import { formatDate } from '../../lib/dates';
 import { isIOS } from '../../lib/platform';
+import { saveExportedFile } from '../../db/files';
 
 const REMINDERS: ReminderKey[] = ['none', '15m', '1h', '1d', '1d1h'];
 
@@ -19,8 +20,10 @@ const REMINDERS: ReminderKey[] = ['none', '15m', '1h', '1d', '1d1h'];
  * فتح ملف التقويم: على الآيفون بنفتحه مباشرة (Safari بيعرض «إضافة الكل» للتقويم)،
  * وعلى الأندرويد بيتنزّل وبيتفتح في تطبيق التقويم.
  */
-function openIcs(text: string, fileName: string): void {
+function openIcs(text: string, fileName: string, seriesName: string): void {
   const blob = new Blob([text], { type: 'text/calendar;charset=utf-8' });
+  // نسخة في «الملفات المصدّرة» (من غير انتظار — الفتح لازم يحصل فوراً)
+  void saveExportedFile(blob, fileName, { kind: 'calendar', seriesName }).catch(() => alert(t().files.saveFailed));
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -31,9 +34,9 @@ function openIcs(text: string, fileName: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-async function shareIcs(text: string, fileName: string): Promise<void> {
+async function shareIcs(text: string, fileName: string, seriesName: string): Promise<void> {
   try {
-    await shareOrDownload(new Blob([text], { type: 'text/calendar' }), fileName, fileName);
+    await shareOrDownload(new Blob([text], { type: 'text/calendar' }), fileName, fileName, { kind: 'calendar', seriesName });
   } catch (e) {
     if ((e as Error).name !== 'AbortError') throw e;
   }
@@ -88,8 +91,8 @@ export function CalendarSheet({ series, onClose }: { series: Series; onClose: ()
     const f = kind === 'meetings' ? meetingsFile() : tasksFile();
     if (!f) return;
     if (kind === 'meetings') remember();
-    if (mode === 'open') openIcs(f.text, f.name);
-    else void shareIcs(f.text, f.name).catch((e) => alert(fmt(t().common.error, { msg: String(e) })));
+    if (mode === 'open') openIcs(f.text, f.name, series.name);
+    else void shareIcs(f.text, f.name, series.name).catch((e) => alert(fmt(t().common.error, { msg: String(e) })));
   };
 
   return (

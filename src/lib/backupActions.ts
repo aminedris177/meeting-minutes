@@ -9,7 +9,7 @@ export async function runBackupExport(): Promise<boolean> {
   const backup = await exportBackup(__APP_VERSION__);
   const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' });
   try {
-    await shareOrDownload(blob, backupFileName(), backupFileName());
+    await shareOrDownload(blob, backupFileName(), backupFileName(), { kind: 'backup' });
   } catch (e) {
     if ((e as Error).name === 'AbortError') return false; // المستخدم قفل نافذة المشاركة
     throw e;
@@ -22,7 +22,7 @@ export async function runSeriesExport(seriesId: string): Promise<void> {
   const file = await exportSeriesFile(seriesId);
   const blob = new Blob([JSON.stringify(file, null, 1)], { type: 'application/json' });
   try {
-    await shareOrDownload(blob, `${safeFileName(`${t().files.series}_${file.series.name}`)}.json`, file.series.name);
+    await shareOrDownload(blob, `${safeFileName(`${t().files.series}_${file.series.name}`)}.json`, file.series.name, { kind: 'series', seriesName: file.series.name });
   } catch (e) {
     if ((e as Error).name !== 'AbortError') throw e;
   }

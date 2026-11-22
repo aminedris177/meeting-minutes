@@ -21,5 +21,5 @@ export async function exportMinutesDocx(model: MinutesModel, logo?: Blob): Promi
   const doc = buildMinutesDocx(model, logo ? await readLogo(logo) : undefined);
   const blob = await Packer.toBlob(doc);
   const typed = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-  await shareOrDownload(typed, minutesFileName(model.seriesName, model.date, 'docx'), `${model.seriesName} — ${model.number}`);
+  await shareOrDownload(typed, minutesFileName(model.seriesName, model.date, 'docx'), `${model.seriesName} — ${model.number}`, { kind: 'minutes', seriesName: model.seriesName });
 }

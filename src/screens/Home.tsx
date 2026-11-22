@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { EmptyState, Screen } from '../components/Screen';
 import { AlertsBanner } from '../components/AlertsBanner';
 import { BackupReminder } from '../components/BackupReminder';
+import { StorageWarning } from '../components/StorageWarning';
 import { QuickBackupButton } from '../components/QuickBackupButton';
 import { HelpIcon, PlusIcon } from '../components/icons';
 import { useLive } from '../db/live';
@@ -35,6 +36,7 @@ export function HomeScreen() {
       {summaries === undefined && <p class="muted center loading-dots" aria-busy="true">…</p>}
       <AlertsBanner />
       <BackupReminder />
+      <StorageWarning />
       {org && !org.name && (
         <section class="card notice">
           <p>{m.setupOrg}</p>

@@ -72,7 +72,7 @@ export async function minutesPdfBlob(model: MinutesModel, logoUrl?: string): Pro
 
 export async function exportMinutesPdf(model: MinutesModel, logoUrl?: string): Promise<void> {
   const blob = await minutesPdfBlob(model, logoUrl);
-  await shareOrDownload(blob, minutesFileName(model.seriesName, model.date, 'pdf'), `${model.seriesName} — ${model.number}`);
+  await shareOrDownload(blob, minutesFileName(model.seriesName, model.date, 'pdf'), `${model.seriesName} — ${model.number}`, { kind: 'minutes', seriesName: model.seriesName });
 }
 
 // ===== ملف المتابعة لكل سلسلة =====
@@ -86,7 +86,7 @@ export async function exportFollowupPdf(seriesId: string): Promise<void> {
     const blob = await renderPdf(h(FollowupReport, { data, logoUrl }), A4_LANDSCAPE, (p, n) =>
       `${data.series.name} — ${f.title}   ·   ${fmt(t().minutes.page, { n: p, total: n })}`,
     );
-    await shareOrDownload(blob, `${safeFileName(`${t().xlsx.filePrefix}_${data.series.name}_${data.today}`)}.pdf`, f.title);
+    await shareOrDownload(blob, `${safeFileName(`${t().xlsx.filePrefix}_${data.series.name}_${data.today}`)}.pdf`, f.title, { kind: 'followup', seriesName: data.series.name });
   } finally {
     if (logoUrl) URL.revokeObjectURL(logoUrl);
   }

@@ -25,6 +25,7 @@ import { TaskPage } from './screens/TaskPage';
 import { ReportScreen } from './screens/Report';
 import { SeriesWizard } from './screens/series/SeriesWizard';
 import { SettingsScreen } from './screens/settings/Settings';
+import { ExportedFilesScreen } from './screens/settings/ExportedFiles';
 
 const UPDATE_CHECK_MS = 60 * 60 * 1000; // فحص التحديثات كل ساعة وعند الرجوع للتطبيق
 
@@ -115,7 +116,13 @@ export function App() {
       break;
     case 'settings':
       screen =
-        segs[1] === 'people' ? <PeopleScreen /> : <SettingsScreen offlineReady={offlineReady} onShowInstall={reopenInstall} />;
+        segs[1] === 'people' ? (
+          <PeopleScreen />
+        ) : segs[1] === 'files' ? (
+          <ExportedFilesScreen />
+        ) : (
+          <SettingsScreen offlineReady={offlineReady} onShowInstall={reopenInstall} />
+        );
       break;
     case 'series':
       screen =

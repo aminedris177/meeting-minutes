@@ -73,7 +73,7 @@ export async function exportFollowupXlsx(seriesId: string): Promise<void> {
   const bytes = buildFollowupXlsx(data);
   const blob = new Blob([bytes as BlobPart], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
   try {
-    await shareOrDownload(blob, `${safeFileName(`${t().xlsx.filePrefix}_${data.series.name}_${data.today}`)}.xlsx`, t().report.title);
+    await shareOrDownload(blob, `${safeFileName(`${t().xlsx.filePrefix}_${data.series.name}_${data.today}`)}.xlsx`, t().report.title, { kind: 'followup', seriesName: data.series.name });
   } catch (e) {
     if ((e as Error).name !== 'AbortError') throw e;
   }
