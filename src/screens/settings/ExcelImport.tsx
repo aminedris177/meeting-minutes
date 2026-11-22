@@ -24,10 +24,16 @@ export function ExcelImport({ onClose }: { onClose: () => void }) {
     setBusy(true);
     setFileName(file.name);
     try {
-      const { default: readXlsxFile } = await import('read-excel-file/browser');
-      const sheets = await readXlsxFile(file);
-      // تعريف CellValue في المكتبة فيه DateConstructor بالغلط — القيم الفعلية Date/string/number
-      setRows(parseTaskSheets(sheets as unknown as SheetInput[]));
+      if (/\.docx$/i.test(file.name) || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        // Word: الجداول اللي في الملف
+        const { readDocxTables } = await import('../../domain/docxTables');
+        setRows(parseTaskSheets(readDocxTables(new Uint8Array(await file.arrayBuffer()))));
+      } else {
+        const { default: readXlsxFile } = await import('read-excel-file/browser');
+        const sheets = await readXlsxFile(file);
+        // تعريف CellValue في المكتبة فيه DateConstructor بالغلط — القيم الفعلية Date/string/number
+        setRows(parseTaskSheets(sheets as unknown as SheetInput[]));
+      }
     } catch {
       alert(m.error);
       setRows(null);
@@ -79,7 +85,7 @@ export function ExcelImport({ onClose }: { onClose: () => void }) {
         <>
           <label class="btn full file-btn">
             {busy && !rows ? m.reading : fileName || m.choose}
-            <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={(e) => void read(e.currentTarget.files?.[0])} />
+            <input type="file" accept=".xlsx,.docx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden onChange={(e) => void read(e.currentTarget.files?.[0])} />
           </label>
 
           {rows && rows.length === 0 && <p class="warn">{m.none}</p>}

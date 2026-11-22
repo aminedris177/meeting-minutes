@@ -332,13 +332,13 @@ export const en: Messages = {
   },
 
   excel: {
-    title: 'Import tasks from Excel',
-    button: 'Import tasks from Excel',
-    hint: 'Same columns as the follow-up file: No., Topic, Task, Owner, Date added, Target date, Status, Latest update, Required for next meeting (Arabic or English headers). The file is read on this device only.',
-    choose: 'Choose Excel file',
+    title: 'Import tasks from Excel or Word',
+    button: 'Import tasks from Excel or Word',
+    hint: 'Same columns as the follow-up file: No., Topic, Task, Owner, Date added, Target date, Status, Latest update, Required for next meeting (Arabic or English headers). From Word: the table must have this header row. The file is read on this device only.',
+    choose: 'Choose Excel or Word file',
     reading: 'Reading…',
     found: 'Found {n} tasks',
-    none: 'No tasks found. Make sure there is a header row with “No.” and “Task”.',
+    none: 'No tasks found. Make sure there is a header row with “No.” and “Task” (in Word, tasks must be in a table).',
     target: 'Series',
     noSeries: 'Create a series first, then import its tasks.',
     createPeople: 'Add new owners to the directory',
@@ -346,7 +346,7 @@ export const en: Messages = {
     import: 'Import {n} tasks',
     done: 'Imported {added} tasks. New people: {people}.',
     skipped: 'Skipped {n} tasks because their number already exists: {codes}',
-    error: 'Could not read the file. Make sure it is an Excel file (.xlsx).',
+    error: 'Could not read the file. Make sure it is an Excel (.xlsx) or Word (.docx) file.',
   },
 
   pin: {
@@ -778,6 +778,7 @@ export const en: Messages = {
           'Open any task: the “Latest update” and “Required for next meeting” are in its update history.',
         ],
         tips: [
+          'Follow-up file in Word? Same steps: choose the .docx file and the app reads its tables using the same column names. Tasks must be in a table, not plain text.',
           'Columns are found by name: No., Topic, Task, Owner, Date added, Target date, Status, Latest update, Required for next meeting (Arabic or English). The “Closed” sheet is read too.',
           'The file is read on the phone only. Importing it twice skips tasks whose number already exists.',
         ],
