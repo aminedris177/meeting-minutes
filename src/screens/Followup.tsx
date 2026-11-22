@@ -20,6 +20,8 @@ import {
 import { db } from '../db/schema';
 import { fmt, t } from '../i18n';
 import { todayISO } from '../lib/dates';
+import { groupByDue } from '../domain/followup';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 
 const FILTER_KEY = 'followup-filter';
 const DEFAULT_FILTER: TaskFilter = { seriesId: 'all', ownerId: 'all', status: 'open' };
@@ -140,6 +142,12 @@ export function FollowupScreen() {
                 value={filter.query ?? ''}
                 onInput={(e) => setFilter({ query: e.currentTarget.value })}
               />
+              <div class="followup-tools">
+                {filter.ownerId !== 'all' && filter.ownerId !== 'none' && <WhatsAppButton ownerId={filter.ownerId} seriesId={filter.seriesId} />}
+                <a class="btn ghost sm" href="#/report">
+                  {m.report}
+                </a>
+              </div>
               {filter.seriesId !== 'all' && <FollowupExportButtons seriesId={filter.seriesId} />}
             </>
           )}
@@ -147,9 +155,17 @@ export function FollowupScreen() {
           {rows !== undefined && hasAnyTask === 0 && <EmptyState text={m.empty} hint={m.emptyHint} />}
           {rows !== undefined && hasAnyTask !== 0 && rows.length === 0 && totalTasks >= 0 && <EmptyState text={m.noMatch} />}
 
-          {rows?.map((r) => (
-            <TaskCard key={r.task.id} row={r} today={today} showSeries={filter.seriesId === 'all'} onStatus={() => setStatusFor(r)} />
-          ))}
+          {rows &&
+            groupByDue(rows, today).map(({ group, rows: gr }) => (
+              <section key={group} class="due-group">
+                <h3 class={'group-title g-' + group}>
+                  {m.groups[group]} <span class="chip-n">{gr.length}</span>
+                </h3>
+                {gr.map((r) => (
+                  <TaskCard key={r.task.id} row={r} today={today} showSeries={filter.seriesId === 'all'} onStatus={() => setStatusFor(r)} />
+                ))}
+              </section>
+            ))}
 
           {rows && rows.length > 0 && <p class="muted small center">{fmt(m.count, { n: rows.length })}</p>}
 

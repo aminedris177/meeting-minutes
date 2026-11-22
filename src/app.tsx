@@ -8,6 +8,7 @@ import { getPin, isSessionUnlocked, setSessionUnlocked } from './lib/pin';
 import { useLang } from './lib/lang';
 import { useBadgeSync } from './lib/alerts';
 import { UpdatePrompt } from './components/UpdatePrompt';
+import { Tour } from './components/Tour';
 import { isInstallHintDismissed, setInstallHintDismissed } from './lib/install';
 import { isStandalone } from './lib/platform';
 import { segments, useHashPath } from './lib/router';
@@ -20,6 +21,7 @@ import { MeetingScreen } from './screens/meeting/MeetingScreen';
 import { MeetingsScreen } from './screens/Meetings';
 import { SeriesPage } from './screens/series/SeriesPage';
 import { TaskPage } from './screens/TaskPage';
+import { ReportScreen } from './screens/Report';
 import { SeriesWizard } from './screens/series/SeriesWizard';
 import { SettingsScreen } from './screens/settings/Settings';
 
@@ -126,6 +128,9 @@ export function App() {
     case 'meeting':
       screen = <MeetingScreen key={segs[1]} id={segs[1] ?? ''} />;
       break;
+    case 'report':
+      screen = <ReportScreen />;
+      break;
     case 'help':
       screen = <HelpScreen section={segs[1]} />;
       break;
@@ -141,6 +146,7 @@ export function App() {
         </div>
       )}
       {screen}
+      <Tour />
       <UpdatePrompt
         needRefresh={needRefresh}
         offlineReady={offlineToast}
@@ -150,7 +156,7 @@ export function App() {
           setOfflineToast(false);
         }}
       />
-      {!fullscreen && <BottomNav active={seg === 'task' ? 'followup' : seg === 'series' ? '' : seg} />}
+      {!fullscreen && <BottomNav active={seg === 'task' || seg === 'report' ? 'followup' : seg === 'series' ? '' : seg} />}
     </div>
   );
 }

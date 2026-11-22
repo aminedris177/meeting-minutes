@@ -102,7 +102,7 @@ select {
   background: var(--surface);
   color: var(--text);
   font: inherit;
-  font-size: 16px; /* أقل من 16 بيخلّي iOS يعمل zoom */
+  font-size: max(16px, 1rem); /* أقل من 16 بيخلّي iOS يعمل zoom */
   -webkit-appearance: none;
   appearance: none;
 }
@@ -1112,4 +1112,100 @@ a.chip {
   aspect-ratio: 390 / 760;
   border-radius: 17px;
   background: #e9eef3;
+}
+.help-search {
+  margin-bottom: 12px;
+}
+.help-tour-btn {
+  align-self: flex-start;
+  margin-bottom: 10px;
+}
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(10, 16, 26, 0.6);
+}
+.tour-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 18px 18px 16px;
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+}
+.tour-card h2 {
+  color: var(--primary);
+  margin-top: 6px;
+}
+.tour-shot {
+  width: min(170px, 48%);
+  margin-top: 4px;
+}
+.tour-shot img {
+  aspect-ratio: auto;
+  max-height: 38dvh;
+  object-fit: cover;
+  object-position: top;
+}
+.tour-skip {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 10px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 6px;
+}
+.tour-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0 12px;
+}
+.tour-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.tour-dots span.on {
+  width: 18px;
+  border-radius: 4px;
+  background: var(--secondary);
+}
+.tour-actions {
+  display: flex;
+  gap: 8px;
+}
+.tour-actions .btn {
+  flex: 1;
+}
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 6px 0 12px;
+}
+.cmp-table th,
+.cmp-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.cmp-table tbody th {
+  text-align: start;
+  font-weight: 600;
+}
+.cmp-table tr.less td:last-child {
+  color: var(--danger);
+  font-weight: 700;
 }

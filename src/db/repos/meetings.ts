@@ -414,3 +414,19 @@ export async function deleteDraftMeeting(id: ID, d: AppDB = db): Promise<void> {
 export async function listMeetings(seriesId: ID, d: AppDB = db): Promise<Meeting[]> {
   return (await d.meetings.where('seriesId').equals(seriesId).toArray()).sort((a, b) => b.number - a.number);
 }
+
+/** محاور آخر اجتماع قبل الاجتماع ده في نفس السلسلة (فاضية لو مفيش). */
+export async function previousMeetingTopics(meeting: Pick<Meeting, 'seriesId' | 'number'>, d: AppDB = db): Promise<string[]> {
+  const prev = (await d.meetings.where('seriesId').equals(meeting.seriesId).toArray())
+    .filter((x) => x.number < meeting.number)
+    .sort((a, b) => b.number - a.number)[0];
+  return (prev?.topics ?? []).map((x) => x.trim()).filter(Boolean);
+}
+
+/** يضيف المحاور اللي مش موجودة (من غير تكرار) ويرجع القايمة الجديدة. */
+export function mergeTopics(current: string[], incoming: string[]): string[] {
+  const seen = new Set(current.map((x) => x.trim()));
+  const out = current.filter((x) => x.trim() !== '');
+  for (const x of incoming) if (!seen.has(x.trim())) (seen.add(x.trim()), out.push(x.trim()));
+  return out;
+}

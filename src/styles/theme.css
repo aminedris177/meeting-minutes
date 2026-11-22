@@ -1,0 +1,122 @@
+/* ===== الوضع الداكن ===== المحضر والتقارير (.minutes) بتفضل فاتحة لأنها ورق A4 */
+:root[data-theme='dark'] {
+  --primary: #9db7e8; /* لون النصوص والعناوين */
+  --primary-fill: #33589a; /* خلفيات الأزرار */
+  --secondary: #4fc3cc;
+  --light: #1c2a38;
+  --cream: #2b2516;
+  --danger: #ef6b6b;
+  --warn: #e8b45a;
+  --ok: #6fcf7a;
+  --bg: #0f141b;
+  --surface: #18202b;
+  --text: #e6ebf2;
+  --muted: #9aa8b8;
+  --border: #2c3644;
+  color-scheme: dark;
+}
+:root[data-theme='dark'] .btn.primary,
+:root[data-theme='dark'] .toast,
+:root[data-theme='dark'] .fab,
+:root[data-theme='dark'] .step-tab.current .step-num,
+:root[data-theme='dark'] .pin-dots span.on,
+:root[data-theme='dark'] .keypad .key-ok,
+:root[data-theme='dark'] .chip.on,
+:root[data-theme='dark'] .cal-day.today .cal-num {
+  background: var(--primary-fill);
+  color: #fff;
+}
+:root[data-theme='dark'] .chip.on {
+  border-color: var(--primary-fill);
+}
+/* خلفيات فاتحة متثبتة في الأستايلات */
+:root[data-theme='dark'] .switch-thumb,
+:root[data-theme='dark'] .seg-btn.on,
+:root[data-theme='dark'] .segmented .on {
+  background: #2a3747;
+}
+:root[data-theme='dark'] .task-card,
+:root[data-theme='dark'] .review-card,
+:root[data-theme='dark'] .list-row,
+:root[data-theme='dark'] .sheet,
+:root[data-theme='dark'] .card {
+  background-color: var(--surface);
+}
+:root[data-theme='dark'] .task-card.late,
+:root[data-theme='dark'] .review-card.late {
+  background: #2a1a1d;
+  border-color: #5a2a2e;
+}
+:root[data-theme='dark'] .status {
+  --c: #b9c4d0;
+  --bg: #273241;
+}
+:root[data-theme='dark'] .s-in_progress {
+  --c: #8fbaf2;
+  --bg: #1d3352;
+}
+:root[data-theme='dark'] .s-blocked {
+  --c: #f0bf6b;
+  --bg: #3a2c12;
+}
+:root[data-theme='dark'] .s-done {
+  --c: #7fd487;
+  --bg: #173320;
+}
+:root[data-theme='dark'] .s-cancelled {
+  --c: #8a96a3;
+  --bg: #232b35;
+}
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea {
+  background-color: #111821;
+  color: var(--text);
+  border-color: var(--border);
+}
+:root[data-theme='dark'] .bottom-nav,
+:root[data-theme='dark'] .screen-header,
+:root[data-theme='dark'] .wizard-footer,
+:root[data-theme='dark'] .sheet-footer {
+  background-color: rgba(24, 32, 43, 0.96);
+  border-color: var(--border);
+}
+:root[data-theme='dark'] .alert-row.late,
+:root[data-theme='dark'] .danger-soft {
+  background: #2a1a1d;
+}
+:root[data-theme='dark'] .minutes,
+:root[data-theme='dark'] .scaled-outer {
+  color-scheme: light;
+}
+:root[data-theme='dark'] .stat.danger,
+:root[data-theme='dark'] .task-head.overdue,
+:root[data-theme='dark'] .review-card.overdue,
+:root[data-theme='dark'] .task-card.overdue,
+:root[data-theme='dark'] .alert-row.late,
+:root[data-theme='dark'] .step-tab.error .step-num,
+:root[data-theme='dark'] .chip.danger:not(.on) .chip-n {
+  background: #3a1d21;
+  border-color: #6a2f35;
+}
+:root[data-theme='dark'] .series-card:active,
+:root[data-theme='dark'] .task-card:active {
+  background: #1f2935;
+}
+:root[data-theme='dark'] .final-tag,
+:root[data-theme='dark'] .final-badge,
+:root[data-theme='dark'] .reg-approved {
+  background: #173320;
+  color: #7fd487;
+}
+:root[data-theme='dark'] .reg-amended {
+  background: #3a2c12;
+  color: #f0bf6b;
+}
+:root[data-theme='dark'] .reg-cancelled {
+  background: #232b35;
+  color: #8a96a3;
+}
+:root[data-theme='dark'] .mp {
+  background: #fff; /* معاينة رأس المحضر = ورق */
+}

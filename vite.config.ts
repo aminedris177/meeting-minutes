@@ -23,9 +23,9 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon-180x180.png'],
       manifest: {
-        name: 'محاضر الاجتماعات',
-        short_name: 'المحاضر',
-        description: 'محاضر الاجتماعات ومتابعة المهام — يعمل بدون إنترنت',
+        name: 'Meeting Follow-up',
+        short_name: 'Meeting Follow-up',
+        description: 'Meeting minutes and task follow-up — works offline. محاضر الاجتماعات ومتابعة المهام.',
         lang: 'ar',
         dir: 'rtl',
         start_url: '.',

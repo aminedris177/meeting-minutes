@@ -4,7 +4,8 @@ import { AutoField } from '../../components/AutoField';
 import { DateField } from '../../components/fields';
 import { CloseIcon, PlusIcon } from '../../components/icons';
 import { SortableList } from '../../components/SortableList';
-import { setNextDate, updateMeeting } from '../../db/repos/meetings';
+import { mergeTopics, previousMeetingTopics, setNextDate, updateMeeting } from '../../db/repos/meetings';
+import { useLive } from '../../db/live';
 import type { Meeting } from '../../db/types';
 import { fmt, t } from '../../i18n';
 
@@ -32,6 +33,14 @@ export function InfoStep({ meeting }: { meeting: Meeting }) {
     listRef.current?.querySelector<HTMLInputElement>(`[data-k="${focusKey}"] input`)?.focus();
     setFocusKey(null);
   }, [focusKey, topics]);
+
+  const prevTopics = useLive(() => previousMeetingTopics(meeting), [meeting.seriesId, meeting.number]);
+  const current = topics.map((x) => x.text.trim());
+  const missing = (prevTopics ?? []).filter((x) => !current.includes(x));
+  const copyPrev = () => {
+    const merged = mergeTopics(topics.map((x) => x.text), missing);
+    setTopics(toTopics(merged));
+  };
 
   const add = () => {
     const [fresh] = toTopics(['']);
@@ -98,6 +107,11 @@ export function InfoStep({ meeting }: { meeting: Meeting }) {
         <button class="btn full" onClick={add}>
           <PlusIcon width={18} height={18} /> {m.addTopic}
         </button>
+        {missing.length > 0 && (
+          <button class="btn ghost full" style={{ marginTop: '8px' }} onClick={copyPrev}>
+            {fmt(m.copyTopics, { n: missing.length })}
+          </button>
+        )}
       </section>
 
       <section class="card">

@@ -91,3 +91,6 @@ export const HelpIcon = (p: P) =>
 
 export const CalendarIcon = (p: P) =>
   base([<rect x="3" y="5" width="18" height="16" rx="2" />, <path d="M3 10h18M8 3v4M16 3v4" />, <path d="M12 13v5M9.5 15.5h5" />], p);
+
+export const BackupIcon = (p: P) =>
+  base([<path d="M7 18a4.5 4.5 0 01-.6-8.96A6 6 0 0118 8.5a4 4 0 01-.5 9.5" />, <path d="M12 20v-8M9 14.5l3-3 3 3" />], p);

@@ -294,3 +294,34 @@ export async function importSeriesFile(f: SeriesFile, d: AppDB = db): Promise<{ 
     return { series, addedPeople };
   });
 }
+
+// ===== مقارنة قبل الاسترجاع =====
+export interface BackupDiff {
+  counts: { kind: 'series' | 'people' | 'meetings' | 'tasks'; current: number; incoming: number }[];
+  /** سلاسل موجودة دلوقتي ومش في الملف (هتضيع) */
+  seriesLost: string[];
+  /** سلاسل في الملف ومش موجودة دلوقتي */
+  seriesNew: string[];
+  /** حاجات اتعدلت على الموبايل بعد تاريخ النسخة (التعديلات دي هتضيع) */
+  newerLocal: number;
+}
+
+export async function compareBackup(b: BackupFile, d: AppDB = db): Promise<BackupDiff> {
+  const kinds = ['series', 'people', 'meetings', 'tasks'] as const;
+  const counts = await Promise.all(kinds.map(async (kind) => ({ kind, current: await d.table(kind).count(), incoming: (b.tables[kind] ?? []).length })));
+  const cur = (await d.series.toArray()) as { id: string; name: string }[];
+  const inc = (b.tables.series ?? []) as { id: string; name: string }[];
+  const incIds = new Set(inc.map((x) => x.id));
+  const curIds = new Set(cur.map((x) => x.id));
+  const exported = Date.parse(b.exportedAt) || 0;
+  let newerLocal = 0;
+  for (const tbl of ['series', 'meetings', 'tasks', 'people'] as const) {
+    newerLocal += await d.table(tbl).filter((r: { updatedAt?: number; createdAt?: number }) => (r.updatedAt ?? r.createdAt ?? 0) > exported).count();
+  }
+  return {
+    counts,
+    seriesLost: cur.filter((x) => !incIds.has(x.id)).map((x) => x.name),
+    seriesNew: inc.filter((x) => !curIds.has(x.id)).map((x) => x.name),
+    newerLocal,
+  };
+}

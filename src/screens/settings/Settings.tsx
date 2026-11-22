@@ -8,6 +8,7 @@ import { formatDate } from '../../lib/dates';
 import { formatBytes, getPersistState, getStorageUsage, isStandalone, type PersistState } from '../../lib/platform';
 import { BackupCard } from './BackupCard';
 import { LanguageCard } from './LanguageCard';
+import { AppearanceCard } from './AppearanceCard';
 import { OrgCard } from './OrgCard';
 import { PinCard } from './PinCard';
 import { BadgeCard } from './BadgeCard';
@@ -43,6 +44,7 @@ export function SettingsScreen({ offlineReady, onShowInstall }: Props) {
         <ChevronIcon />
       </a>
       <LanguageCard />
+      <AppearanceCard />
       <OrgCard />
 
       <a class="card nav-card" href="#/settings/people">

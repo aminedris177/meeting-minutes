@@ -2,7 +2,7 @@
 import type { Messages } from './ar';
 
 export const en: Messages = {
-  appName: 'Meeting Minutes',
+  appName: 'Meeting Follow-up',
 
   nav: {
     home: 'Home',
@@ -76,6 +76,7 @@ export const en: Messages = {
     nextReset: 'Back to automatic',
     topics: 'Topics',
     addTopic: 'Add topic',
+    copyTopics: 'Copy topics from last meeting ({n})',
     topicPlaceholder: 'Topic {n}',
     notes: 'Notes',
     notesPlaceholder: 'Optional — shown in the minutes',
@@ -183,11 +184,30 @@ export const en: Messages = {
       all: 'All',
     },
     count: '{n} tasks',
+    groups: { overdue: 'Overdue', today: 'Due today', week: 'Rest of this week', later: 'Later', noDate: 'No due date', closed: 'Closed' },
+    whatsapp: 'Send their tasks on WhatsApp',
+    whatsappNone: 'This person has no open tasks.',
+    msg: {
+      greeting: 'Hi {name},',
+      intro: 'Here are your open tasks ({n}):',
+      late: '{n} days late',
+      due: 'due {date}',
+      noDate: 'no due date',
+    },
+    report: 'Owners report',
+    reportHint: 'For each owner: open, overdue and closed tasks, and on-time closing rate.',
+    reportCols: { open: 'Open', overdue: 'Overdue', closed: 'Closed', onTime: 'On time', avgDelay: 'Avg. delay' },
+    reportEmpty: 'No tasks yet.',
+    daysShort: '{n} d',
   },
 
   task: {
     new: 'New task',
     edit: 'Edit task',
+    fromTemplate: 'From template',
+    saveTemplate: 'Save as template for next time',
+    templateSaved: 'Saved as template ✓',
+    removeTemplate: 'Delete template',
     series: 'Series',
     description: 'Description',
     descriptionRequired: 'Description is required',
@@ -253,11 +273,25 @@ export const en: Messages = {
     daysAgo: '{n} days ago',
     today: 'today',
     export: 'Back up now',
+    quick: 'Quick backup',
+    quickDone: 'Backup done ✓',
     restore: 'Restore from file',
     exported: 'Backup is ready.',
     confirmRestore:
       'Restore this backup?\n\nIt contains: {series} series, {people} people, {meetings} meetings, {tasks} tasks.\nDate: {date}\n\nAll current data will be erased and replaced. (A safety copy of the current data is saved first.)',
     restored: 'Restored. The app will reload.',
+    compare: {
+      title: 'Before you restore: compare',
+      fileDate: 'Backup date: {date}',
+      current: 'Now',
+      file: 'In file',
+      kinds: { series: 'Series', people: 'People', meetings: 'Meetings', tasks: 'Tasks' },
+      lost: 'Series you have now that are not in the file — will be removed:',
+      added: 'Series coming from the file:',
+      newer: '{n} items were changed on this phone after this backup was made; those changes will be lost.',
+      safe: 'A safety copy of the current data is saved first, so you can go back.',
+      confirm: 'Restore this backup',
+    },
     errors: {
       'not-json': 'This file is not a backup (not JSON).',
       'wrong-format': 'This file is not a backup from this app.',
@@ -539,6 +573,11 @@ export const en: Messages = {
     language: 'Language / اللغة',
     languageHint: 'Language of the app, the minutes and exported files.',
     langNames: { ar: 'العربية', en: 'English' },
+    appearance: 'Appearance and text size',
+    appearanceHint: 'Applies to this phone only.',
+    themeNames: { system: 'Match phone', light: 'Light', dark: 'Dark' },
+    textSize: 'Text size',
+    textSizeNames: { normal: 'Normal', large: 'Large', xlarge: 'Larger' },
   },
 
   titles: { 'أ/': 'Mr./Ms.', 'م/': 'Eng.', 'د/': 'Dr.' },
@@ -595,6 +634,9 @@ export const en: Messages = {
     open: 'User guide',
     openHint: 'How to do each thing in the app',
     howToImport: 'How do I import?',
+    search: 'Search the guide… e.g. PIN, Excel, attendance',
+    noResults: 'No results. Try another word.',
+    tour: 'Quick tour of the app',
     intro: 'Pick the topic you need. Steps are in the order you do them in the app.',
     sections: [
       {
@@ -630,6 +672,7 @@ export const en: Messages = {
           'Review: for each open task pick the status with one tap, and write the update and what is required for next meeting.',
           'Decisions, new tasks and the cumulative register.',
           'Preview → “Approve minutes”, then export Word or PDF.',
+          'In the Details step, “Copy topics from last meeting” adds the previous meeting’s topics with one tap.',
         ],
         tips: ['Everything saves on its own. You can leave and continue the draft any time.'],
       },
@@ -641,6 +684,10 @@ export const en: Messages = {
           'Filter by series, owner or status, or search by task number.',
           'Tap the status on a card to change it right away.',
           'Tap the card to open the task: details, update history and “Add update”.',
+          'Tasks are grouped by due date: overdue, due today, rest of this week, later.',
+          'Pick an owner in the filter → “Send their tasks on WhatsApp”: the message is ready with all their open tasks; you choose the contact.',
+          '“Owners report”: a bar per owner with overdue, open and closed tasks, plus the on-time closing rate. Tap a name to see their tasks.',
+          'A task you add often? In “New task” tap “Save as template”, and next time pick it under “From template”.',
         ],
         tips: ['“Done” and “Cancelled” set the closing date automatically.'],
       },
@@ -707,11 +754,11 @@ export const en: Messages = {
         title: 'Backup and restore',
         steps: [
           'Settings → “Back up now” → send the file to yourself or save it to Drive.',
-          'To restore: Settings → “Restore from file” → choose the file → confirm.',
+          'To restore: Settings → “Restore from file” → choose the file. You see a comparison between your current data and the file, and anything that would be lost, then confirm.',
           'Before any restore, the app saves a safety copy of the current data. Go back to it from “Automatic safety copies”.',
           'Move a series to another phone: series page → “Export series settings”; on the other phone: Settings → “Import a series from file”.',
         ],
-        tips: ['If the last backup is more than 7 days old, a reminder shows on Home.'],
+        tips: ['If the last backup is more than 7 days old, a reminder shows on Home.', 'Fastest way: the cloud button ☁ at the top of Home makes a backup and opens sharing right away.'],
       },
       {
         id: 'pin',
@@ -733,6 +780,15 @@ export const en: Messages = {
         tips: ['The language is saved in the backup.'],
       },
       {
+        id: 'appearance',
+        title: 'Appearance and text size',
+        steps: [
+          'Settings → “Appearance and text size”: light, dark, or match phone.',
+          'Text size: normal, large or larger. It enlarges text on every screen.',
+        ],
+        tips: ['The minutes and exported files keep the same look whatever the appearance.'],
+      },
+      {
         id: 'update',
         title: 'Updates and offline use',
         steps: [
@@ -745,6 +801,21 @@ export const en: Messages = {
       },
     ],
     tipsLabel: 'Note',
+  },
+
+  tour: {
+    skip: 'Skip',
+    next: 'Next',
+    back: 'Back',
+    done: "Let's start",
+    slides: [
+      { shot: 'series-0', title: 'Welcome to Meeting Follow-up', text: 'Each meeting series has a card on Home: open and overdue tasks and the next meeting. Alerts for overdue tasks and today’s meeting appear on top.' },
+      { shot: 'series-1', title: 'Start with a series', text: '“New series”: name, task number prefix (like QA), recurrence, attendees and topics.' },
+      { shot: 'meeting-3', title: 'The meeting, step by step', text: 'One-tap attendance, review every open task, decisions and new tasks. Everything saves automatically.' },
+      { shot: 'followup-0', title: 'Follow-up', text: 'All tasks in one place, overdue in red. Change status with one tap, and send an owner their tasks on WhatsApp.' },
+      { shot: 'calendar-0', title: 'Calendar', text: 'Meeting days and task due dates on a month calendar, and you can add them to your phone calendar for reminders.' },
+      { shot: 'backup-0', title: 'Your data stays on your phone', text: 'No server. Back up weekly with the cloud button on Home or from Settings. The ❓ guide explains everything.' },
+    ],
   },
 
   files: {

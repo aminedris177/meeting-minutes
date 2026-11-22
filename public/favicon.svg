@@ -1,10 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="96" fill="#1F3864"/>
-  <rect x="136" y="96" width="240" height="320" rx="24" fill="#FFFFFF"/>
-  <rect x="176" y="156" width="160" height="20" rx="10" fill="#0E7C86"/>
-  <rect x="176" y="208" width="160" height="16" rx="8" fill="#B8C4D6"/>
-  <rect x="176" y="248" width="120" height="16" rx="8" fill="#B8C4D6"/>
-  <rect x="176" y="288" width="140" height="16" rx="8" fill="#B8C4D6"/>
-  <circle cx="356" cy="372" r="64" fill="#0E7C86"/>
-  <path d="M326 372l22 22 40-44" stroke="#FFFFFF" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F3864"/>
+      <stop offset="1" stop-color="#0E6F7A"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <!-- حلقة المتابعة: سهم دائري -->
+  <path d="M352.4 141.1 A150 150 0 1 1 204.7 115" fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linecap="round"/>
+  <path d="M246 100 L188 70 L212 160 Z" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round"/>
+  <!-- قلب: ورقة المحضر وعلامة صح -->
+  <circle cx="256" cy="264" r="92" fill="#3FC1C9"/>
+  <path d="M210 266 l32 32 l64 -70" fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

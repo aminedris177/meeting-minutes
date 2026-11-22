@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { EmptyState, Screen } from '../components/Screen';
 import { AlertsBanner } from '../components/AlertsBanner';
 import { BackupReminder } from '../components/BackupReminder';
+import { QuickBackupButton } from '../components/QuickBackupButton';
 import { HelpIcon, PlusIcon } from '../components/icons';
 import { useLive } from '../db/live';
 import { getOrg } from '../db/repos/org';
@@ -23,9 +24,12 @@ export function HomeScreen() {
     <Screen
       title={m.title}
       actions={
-        <a class="icon-btn" href="#/help" aria-label={t().help.open}>
-          <HelpIcon />
-        </a>
+        <>
+          {summaries !== undefined && summaries.length > 0 && <QuickBackupButton />}
+          <a class="icon-btn" href="#/help" aria-label={t().help.open}>
+            <HelpIcon />
+          </a>
+        </>
       }
     >
       <AlertsBanner />

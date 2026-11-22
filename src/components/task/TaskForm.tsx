@@ -7,6 +7,9 @@ import { createTask, TASK_PRIORITIES, updateTask } from '../../db/repos/tasks';
 import type { ID, Person, Series, Task, TaskPriority } from '../../db/types';
 import { fmt, t } from '../../i18n';
 import { todayISO, type ISODate } from '../../lib/dates';
+import { useLive } from '../../db/live';
+import { listTemplates, removeTemplate, saveTemplate, type TaskTemplate } from '../../db/repos/templates';
+import { CloseIcon } from '../icons';
 
 interface Props {
   /** موجودة = تعديل */
@@ -61,6 +64,17 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
 
   const descError = tried && !f.description.trim();
 
+  // قوالب المهام (في الإضافة بس)
+  const templates = useLive(() => listTemplates(), []);
+  const [savedTpl, setSavedTpl] = useState(false);
+  const applyTemplate = (tp: TaskTemplate) =>
+    setF((s) => ({ ...s, description: tp.description, topic: tp.topic, priority: tp.priority, ownerId: tp.ownerId && people.some((p) => p.id === tp.ownerId) ? tp.ownerId : s.ownerId }));
+  const saveAsTemplate = async () => {
+    if (!f.description.trim()) return setTried(true);
+    await saveTemplate({ description: f.description, topic: f.topic, ownerId: f.ownerId, priority: f.priority });
+    setSavedTpl(true);
+  };
+
   const save = async () => {
     setTried(true);
     if (!f.description.trim() || !f.seriesId || busy) return;
@@ -105,6 +119,24 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
               <option value={s.id}>{s.name}</option>
             ))}
           </select>
+        </div>
+      )}
+
+      {!task && templates && templates.length > 0 && (
+        <div class="field">
+          <span class="label">{m.fromTemplate}</span>
+          <div class="topic-chips tpl-chips">
+            {templates.map((tp) => (
+              <span class="tpl-chip" key={tp.id}>
+                <button type="button" class="chip" onClick={() => applyTemplate(tp)}>
+                  {tp.description.length > 40 ? tp.description.slice(0, 40) + '…' : tp.description}
+                </button>
+                <button type="button" class="icon-btn sm" aria-label={m.removeTemplate} onClick={() => confirm(m.removeTemplate + '؟') && void removeTemplate(tp.id)}>
+                  <CloseIcon width={14} height={14} />
+                </button>
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
@@ -172,6 +204,11 @@ export function TaskForm({ task, seriesList, people, defaultSeriesId, meetingId,
           onChange={(v) => set('priority', v)}
         />
       </div>
+      {!task && (
+        <button type="button" class="link-btn" onClick={() => void saveAsTemplate()} disabled={savedTpl}>
+          {savedTpl ? m.templateSaved : m.saveTemplate}
+        </button>
+      )}
     </Sheet>
   );
 }

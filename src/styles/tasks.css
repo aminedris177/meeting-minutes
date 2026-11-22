@@ -803,3 +803,133 @@ button.nav-card {
 .cal-actions p {
   margin: 0;
 }
+.wa-btn {
+  color: #128c4b;
+  border-color: #9fd9b4;
+  gap: 6px;
+}
+:root[data-theme='dark'] .wa-btn {
+  color: #5fd38d;
+  border-color: #2f5e43;
+}
+.group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 2px 6px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.group-title.g-overdue {
+  color: var(--danger);
+}
+.group-title .chip-n {
+  font-weight: 600;
+}
+.followup-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+/* تقرير المسؤولين */
+.rep-legend {
+  display: flex;
+  gap: 14px;
+  margin: 12px 2px 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.rep-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.rep-legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.seg-overdue {
+  background: #c62828;
+}
+.seg-open {
+  background: #2f6bc4;
+}
+.seg-closed {
+  background: #2e7d32;
+}
+:root[data-theme='dark'] .seg-overdue {
+  background: #e25c5c;
+}
+:root[data-theme='dark'] .seg-open {
+  background: #5b93e0;
+}
+:root[data-theme='dark'] .seg-closed {
+  background: #4caf62;
+}
+.rep-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rep-name {
+  align-self: flex-start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rep-bar {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--light);
+  overflow: hidden;
+}
+.rep-bar span {
+  height: 100%;
+  min-width: 4px;
+}
+.rep-bar span:first-child {
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+}
+.rep-bar span:last-child {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+}
+.rep-nums {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin: 0;
+  text-align: center;
+}
+.rep-nums dt {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.rep-nums dd {
+  margin: 0;
+  font-weight: 700;
+}
+.rep-nums .danger dd {
+  color: var(--danger);
+}
+.wa-btn.sm {
+  align-self: flex-start;
+}
+.tpl-chip {
+  display: inline-flex;
+  align-items: center;
+}
+.tpl-chip .icon-btn.sm {
+  width: 28px;
+  height: 28px;
+  color: var(--muted);
+}

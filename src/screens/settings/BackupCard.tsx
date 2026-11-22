@@ -1,7 +1,9 @@
 // الإعدادات ← النسخ الاحتياطي: تصدير، استرجاع (مع نسخة أمان تلقائية)، نسخ الأمان، نقل سلسلة، استيراد Excel.
 import { useState } from 'preact/hooks';
 import {
-  backupSummary,
+  compareBackup,
+  type BackupDiff,
+  type BackupFile,
   getSafetySnapshot,
   importSeriesFile,
   listSafetySnapshots,
@@ -15,6 +17,7 @@ import { fmt, t } from '../../i18n';
 import { pickFile, runBackupExport } from '../../lib/backupActions';
 import { diffDays, formatDate, todayISO } from '../../lib/dates';
 import { ExcelImport } from './ExcelImport';
+import { Sheet } from '../../components/Sheet';
 
 export function lastBackupText(last: string | undefined): string {
   const m = t().backup;
@@ -29,6 +32,7 @@ export function BackupCard() {
   const [snapshots, setSnapshots] = useState<Awaited<ReturnType<typeof listSafetySnapshots>> | null>(null);
   const [busy, setBusy] = useState(false);
   const [excel, setExcel] = useState(false);
+  const [pending, setPending] = useState<{ backup: BackupFile; diff: BackupDiff } | null>(null);
 
   const guard = async (fn: () => Promise<void>) => {
     if (busy) return;
@@ -53,10 +57,13 @@ export function BackupCard() {
         alert(m.errors[parsed.error]);
         return;
       }
-      const s = backupSummary(parsed.backup);
-      const date = parsed.backup.exportedAt ? formatDate(parsed.backup.exportedAt.slice(0, 10)) : '—';
-      if (!confirm(fmt(m.confirmRestore, { ...s, date }))) return;
-      await safeRestore(parsed.backup, __APP_VERSION__);
+      setPending({ backup: parsed.backup, diff: await compareBackup(parsed.backup) });
+    });
+
+  const confirmRestore = () =>
+    guard(async () => {
+      if (!pending) return;
+      await safeRestore(pending.backup, __APP_VERSION__);
       alert(m.restored);
       location.reload();
     });
@@ -130,6 +137,54 @@ export function BackupCard() {
       </details>
 
       {excel && <ExcelImport onClose={() => setExcel(false)} />}
+      {pending && (
+        <Sheet
+          title={m.compare.title}
+          onClose={() => setPending(null)}
+          footer={
+            <>
+              <button class="btn primary grow" onClick={confirmRestore} disabled={busy}>
+                {m.compare.confirm}
+              </button>
+              <button class="btn ghost" onClick={() => setPending(null)}>
+                {t().common.cancel}
+              </button>
+            </>
+          }
+        >
+          <p class="muted">{fmt(m.compare.fileDate, { date: pending.backup.exportedAt ? formatDate(pending.backup.exportedAt.slice(0, 10)) : '—' })}</p>
+          <table class="cmp-table">
+            <thead>
+              <tr>
+                <th />
+                <th>{m.compare.current}</th>
+                <th>{m.compare.file}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pending.diff.counts.map((c) => (
+                <tr key={c.kind} class={c.incoming < c.current ? 'less' : ''}>
+                  <th>{m.compare.kinds[c.kind]}</th>
+                  <td>{c.current}</td>
+                  <td>{c.incoming}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {pending.diff.newerLocal > 0 && <p class="warn">{fmt(m.compare.newer, { n: pending.diff.newerLocal })}</p>}
+          {pending.diff.seriesLost.length > 0 && (
+            <p class="warn">
+              {m.compare.lost} <b>{pending.diff.seriesLost.join('، ')}</b>
+            </p>
+          )}
+          {pending.diff.seriesNew.length > 0 && (
+            <p>
+              {m.compare.added} <b>{pending.diff.seriesNew.join('، ')}</b>
+            </p>
+          )}
+          <p class="muted small">{m.compare.safe}</p>
+        </Sheet>
+      )}
     </section>
   );
 }

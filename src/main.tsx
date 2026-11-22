@@ -7,12 +7,15 @@ import './styles/components.css';
 import './styles/tasks.css';
 import './styles/minutes.css';
 import './styles/dir.css';
+import './styles/theme.css';
 import { App } from './app';
 import { initialLang, setLang } from './i18n';
 import { captureInstallPrompt } from './lib/install';
+import { initAppearance } from './lib/appearance';
 import { requestPersistentStorage } from './lib/platform';
 
 setLang(initialLang());
+initAppearance();
 captureInstallPrompt();
 // اطلب التخزين الدائم أول ما التطبيق يفتح
 void requestPersistentStorage();
