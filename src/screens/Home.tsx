@@ -42,7 +42,7 @@ export function HomeScreen() {
         </section>
       )}
 
-      {summaries !== undefined && active.length === 0 && archived.length === 0 && (
+      {summaries !== undefined && active.length === 0 && (
         <EmptyState text={m.empty} hint={m.emptyHint}>
           <a class="btn primary" href="#/series/new">
             <PlusIcon width={18} height={18} /> {m.newSeries}
@@ -61,7 +61,7 @@ export function HomeScreen() {
       )}
       {showArchived && archived.map((s) => <SeriesCard key={s.series.id} summary={s} today={today} />)}
 
-      {summaries !== undefined && (active.length > 0 || archived.length > 0) && (
+      {summaries !== undefined && active.length > 0 && (
         <a class="fab" href="#/series/new">
           <PlusIcon /> <span>{m.newSeries}</span>
         </a>

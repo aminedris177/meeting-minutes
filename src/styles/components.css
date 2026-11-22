@@ -1226,3 +1226,12 @@ a.chip {
   font-size: 0.85rem;
   color: var(--muted);
 }
+/* مساحة تحت المحتوى علشان الزرار العايم ميغطيش آخر كلام */
+.screen:has(> .fab),
+.screen:has(.fab) {
+  padding-bottom: 88px;
+}
+/* وكمان لما رسالة (تحديث/أوفلاين) ظاهرة تحت */
+.app:has(.toast) .screen {
+  padding-bottom: 150px;
+}
