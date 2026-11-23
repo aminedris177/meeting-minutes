@@ -11,6 +11,12 @@ import { formatBytes } from '../../lib/platform';
 
 const OLD_DAYS = 90;
 
+/** «محضر_س_2026-11-22.pdf» → { base: 'محضر س', date: '2026-11-22', ext: 'PDF' } — علشان الاسم العربي ميتلخبطش مع الامتداد والتاريخ */
+export function splitFileName(name: string): { base: string; date: string; ext: string } {
+  const m = /^(.*?)(?:[_ ]?(\d{4}-\d{2}-\d{2}))?(?:\.(\w+))?$/.exec(name)!;
+  return { base: m[1].replace(/_/g, ' ').trim(), date: m[2] ?? '', ext: (m[3] ?? '').toUpperCase() };
+}
+
 export function ExportedFilesScreen() {
   const m = t().exported;
   const files = useLive(() => listFiles(), []);
@@ -83,15 +89,24 @@ export function ExportedFilesScreen() {
             <section class="card flush" key={name}>
               <h2 class="flush-title">{name}</h2>
               <ul class="list">
-                {list.map((f) => (
+                {list.map((f) => {
+                  const p = splitFileName(f.name);
+                  return (
                   <li key={f.id} class="list-row file-row">
                     {selecting && <input type="checkbox" checked={picked.has(f.id!)} onChange={() => toggle(f.id!)} aria-label={f.name} />}
                     <span class="list-main" onClick={() => selecting && toggle(f.id!)}>
-                      <span class="list-title file-name" dir="auto">
-                        {f.name}
+                      <span class="list-title file-name" title={f.name}>
+                        <bdi>{p.base}</bdi> {p.date && <bdi dir="ltr">{p.date}</bdi>}
                       </span>
                       <span class="list-sub">
-                        {m.kinds[f.kind]} · <span dir="ltr">{formatDate(toISODate(new Date(f.createdAt)))}</span> · <span dir="ltr">{formatBytes(f.size)}</span>
+                        {m.kinds[f.kind]}
+                        {p.ext && (
+                          <>
+                            {' · '}
+                            <span dir="ltr">{p.ext}</span>
+                          </>
+                        )}{' '}
+                        · <span dir="ltr">{formatDate(toISODate(new Date(f.createdAt)))}</span> · <span dir="ltr">{formatBytes(f.size)}</span>
                       </span>
                     </span>
                     {!selecting && (
@@ -105,7 +120,8 @@ export function ExportedFilesScreen() {
                       </>
                     )}
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </section>
           ))}

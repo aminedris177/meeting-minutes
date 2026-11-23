@@ -43,3 +43,12 @@ describe('exported files', () => {
     expect(Object.keys(backup.tables)).not.toContain('files');
   });
 });
+
+describe('splitFileName', () => {
+  it('splits base, date and extension', async () => {
+    const { splitFileName } = await import('../src/screens/settings/ExportedFiles');
+    expect(splitFileName('محضر_اجتماع_الجودة_2026-11-22.pdf')).toEqual({ base: 'محضر اجتماع الجودة', date: '2026-11-22', ext: 'PDF' });
+    expect(splitFileName('Backup_MeetingMinutes_2026-11-23.json')).toEqual({ base: 'Backup MeetingMinutes', date: '2026-11-23', ext: 'JSON' });
+    expect(splitFileName('file.ics')).toEqual({ base: 'file', date: '', ext: 'ICS' });
+  });
+});

@@ -8,7 +8,7 @@ export const HELP_SHOTS: Record<string, number[]> = {
   calendar: [0, 1, 3],
   archive: [0, 1],
   people: [0, 1],
-  export: [0, 1],
+  export: [0, 1, 3],
   import: [1, 2, 3, 4, 5],
   backup: [0],
   pin: [0, 1],

@@ -621,8 +621,8 @@ export const en: Messages = {
     textSizeNames: { normal: 'Normal', large: 'Large', xlarge: 'Larger' },
   },
 
-  titles: { 'أ/': 'Mr.', 'أة/': 'Ms.', 'م/': 'Eng.', 'د/': 'Dr.' },
-  titleNames: { 'أ/': 'Mr.', 'أة/': 'Ms.', 'م/': 'Eng.', 'د/': 'Dr.' },
+  titles: { 'أ/': 'Mr.', 'أة/': 'Ms.', 'س/': 'Mrs.', 'م/': 'Eng.', 'د/': 'Dr.' },
+  titleNames: { 'أ/': 'Mr.', 'أة/': 'Ms.', 'س/': 'Mrs.', 'م/': 'Eng.', 'د/': 'Dr.' },
 
   calendar: {
     title: 'Calendar',
@@ -777,11 +777,11 @@ export const en: Messages = {
           'Minutes: from the last meeting step, or Archive → the meeting → Word, PDF or Print.',
           'Follow-up file: series page → “Follow-up PDF” or “Follow-up Excel”.',
           'After exporting, the share sheet opens (WhatsApp, email, Files). If sharing is not available, the file downloads.',
+          'A copy of every file you export is saved in the app automatically: Settings → “Exported files”. They are grouped by series; share them again or delete them (one by one, or “Select” for several). The file is still downloaded or shared as before.',
         ],
         tips: [
           'The follow-up Excel file can be imported back into the app.',
           'The follow-up file shows only the latest update of each task. The minutes show the update written in that meeting.',
-          'A copy of every file you export is saved in the app automatically: Settings → “Exported files”. They are grouped by series; share them again or delete them (one by one, or “Select” for several). The file is still downloaded or shared as before.',
           'Storage: “Delete files older than 3 months” frees space. If storage passes 80%, a notice shows on Home. If it is completely full, exporting still works but the copy is not saved in the app.',
         ],
       },
