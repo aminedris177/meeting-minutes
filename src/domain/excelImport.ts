@@ -32,7 +32,7 @@ type Field = 'code' | 'topic' | 'description' | 'owner' | 'created' | 'target' |
 const ALIASES: Record<Field, string[]> = {
   // عربي + إنجليزي (الإنجليزي lowercase — المقارنة بتتجاهل حالة الحروف)
   code: ['الرقم', 'رقم', 'رقم المهمة', 'الكود', 'م', 'no.', 'no', 'code', 'id', '#'],
-  topic: ['المحور', 'محور', 'topic'],
+  topic: ['النقطة الرئيسية', 'النقاط الرئيسية', 'المحور', 'محور', 'topic'],
   description: ['المهمة', 'الوصف', 'البند', 'وصف المهمة', 'المهمه', 'task', 'description'],
   owner: ['المسؤول', 'المسئول', 'مسؤول التنفيذ', 'owner', 'responsible'],
   created: ['تاريخ الإدراج', 'تاريخ الادراج', 'الإدراج', 'تاريخ الإضافة', 'date added', 'created'],
