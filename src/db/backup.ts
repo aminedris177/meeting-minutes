@@ -15,7 +15,7 @@ export const TABLES = ['org', 'people', 'series', 'meetings', 'attendance', 'tas
 export type TableName = (typeof TABLES)[number];
 
 /** إعدادات خاصة بالجهاز — مبتدخلش في النسخة ومبتتمسحش بالاسترجاع */
-const DEVICE_SETTINGS: string[] = [SETTING.pin, SETTING.lastBackupAt];
+const DEVICE_SETTINGS: string[] = [SETTING.pin, SETTING.lastBackupAt, SETTING.overdueNotify];
 
 export interface BackupFile {
   format: typeof BACKUP_FORMAT;

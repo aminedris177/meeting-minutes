@@ -46,7 +46,7 @@ function saveFilter(f: TaskFilter): void {
 
 const STATUS_CHIPS: StatusFilter[] = ['open', 'overdue', ...TASK_STATUSES, 'all'];
 
-export function FollowupScreen() {
+export function FollowupScreen({ preset }: { preset?: 'overdue' } = {}) {
   const m = t().followup;
   const mt = t().task;
   const today = todayISO();
@@ -60,6 +60,11 @@ export function FollowupScreen() {
       saveFilter(next);
       return next;
     });
+
+  // جاي من إشعار المتأخر: كل السلاسل، كل المسؤولين، المتأخر بس
+  useEffect(() => {
+    if (preset === 'overdue') setFilter({ seriesId: 'all', ownerId: 'all', status: 'overdue', query: '' });
+  }, [preset]);
 
   const rows = useLive(() => queryTasks(filter, today), [filter.seriesId, filter.ownerId, filter.status, filter.query, today]);
   const counts = useLive(() => countByStatus({ seriesId: filter.seriesId, ownerId: filter.ownerId }, today), [filter.seriesId, filter.ownerId, today]);

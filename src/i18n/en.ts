@@ -649,7 +649,15 @@ export const en: Messages = {
     badgeEnable: 'Allow',
     badgeOn: 'On',
     badgeBlocked: 'Permission is blocked in the phone settings.',
-    badgeUnsupported: 'This phone does not support a number on the app icon.',
+    badgeUnsupported: 'This device does not support a number on the app icon (e.g. Chrome on Android). Use “Overdue alert” below instead.',
+    countHint: 'The count includes only open tasks whose target date has passed. Tasks without a date are not counted.',
+    notify: 'Overdue alert (notification)',
+    notifyHint: 'One notification with the number of overdue tasks, updated instead of repeated. Tapping it opens Follow-up on “Overdue”.',
+    notifyBgOn: 'Background updates are on: the notification updates about every 12 hours even when the app is closed. The exact timing is decided by Chrome, not the app (battery and usage).',
+    notifyBgOff: 'The notification updates when you open the app. Background updates are not available here (needs Chrome on Android with the app installed); when they work, Chrome decides the timing, not the app.',
+    notifyUnsupported: 'This device does not support notifications from the app. On iPhone the app must be added to the Home Screen.',
+    notifyTitle: 'Overdue tasks',
+    notifyBody: 'You have {n} overdue tasks. Tap to review.',
   },
 
   addToCal: {
@@ -733,6 +741,7 @@ export const en: Messages = {
           'A task you add often? In “New task” tap “Save as template”, and next time pick it under “From template”.',
         ],
         tips: [
+          'Overdue alert: Settings → “Overdue alert (notification)”. One notification with the overdue count; tapping it opens Follow-up on “Overdue”. On iPhone the number shows on the app icon instead.',
           '“Done” and “Cancelled” set the closing date automatically.',
           'Every update is kept in the task history, but the follow-up file shows only the latest one (marked “Latest update” in the history). The history shows the latest 5; “Show all updates” shows the rest.',
         ],

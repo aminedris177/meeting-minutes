@@ -1,12 +1,13 @@
 // تنبيهات جوه التطبيق: المتأخر، اللي معاده خلال 3 أيام، واجتماع النهارده/بكرة.
 // + رقم المتأخر على أيقونة التطبيق (Badging API) — بيتحدّث لما التطبيق يتفتح.
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { useLive } from '../db/live';
 import { seriesNextDate } from '../db/repos/meetings';
 import { db, type AppDB } from '../db/schema';
 import type { Series } from '../db/types';
 import { delayDays, isOpen } from '../domain/delay';
 import { addDays, diffDays, todayISO, type ISODate } from './dates';
+import { syncOverdueNotification } from './overdueNotify';
 
 export const SOON_DAYS = 3;
 
@@ -56,11 +57,26 @@ export async function updateBadge(count: number): Promise<void> {
   }
 }
 
-/** بيحدّث رقم الأيقونة كل ما عدد المتأخر يتغير والتطبيق مفتوح. */
+/**
+ * بيحدّث رقم الأيقونة وإشعار المتأخر كل ما عدد المتأخر يتغير، ولما التطبيق يرجع للواجهة
+ * (ساعتها «النهارده» بيتحسب من جديد — لو التطبيق فضل مفتوح لليوم اللي بعده).
+ */
 export function useBadgeSync(): void {
-  const today = todayISO();
+  const [today, setToday] = useState(todayISO);
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      setToday(todayISO());
+      setTick((n) => n + 1);
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
   const alerts = useLive(() => computeAlerts(today), [today]);
   useEffect(() => {
-    if (alerts) void updateBadge(alerts.overdue);
-  }, [alerts?.overdue]);
+    if (!alerts) return;
+    void updateBadge(alerts.overdue);
+    void syncOverdueNotification(alerts.overdue);
+  }, [alerts?.overdue, tick]);
 }

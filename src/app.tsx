@@ -106,7 +106,8 @@ export function App() {
       screen = <MeetingsScreen />;
       break;
     case 'followup':
-      screen = <FollowupScreen />;
+      // #/followup/overdue: من إشعار المتأخر
+      screen = <FollowupScreen preset={segs[1] === 'overdue' ? 'overdue' : undefined} />;
       break;
     case 'task':
       screen = <TaskPage key={segs[1]} id={segs[1] ?? ''} />;

@@ -45,6 +45,8 @@ export default defineConfig({
         // precache كامل: كل الكود والخطوط والأيقونات → أوفلاين 100%
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2,jpg}'],
         navigateFallback: 'index.html',
+        // إشعار المتأخر: التحديث في الخلفية والضغط على الإشعار
+        importScripts: ['sw-overdue.js'],
         cleanupOutdatedCaches: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
